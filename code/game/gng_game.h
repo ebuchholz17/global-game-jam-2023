@@ -12,6 +12,7 @@ enum c_bool {
 #include "gng_audio.h"
 
 #include "hitbox/hitbox.h"
+#include "ace_of_blades/ace_of_blades.h"
 
 typedef struct spinning_triangle {
     f32 x;
@@ -47,6 +48,8 @@ typedef struct gng_game_state {
 
     f32 t;
     virtual_input vInput;
+
+    aob_state aobState;
 
     f32 soundT;
 

@@ -1,75 +1,397 @@
 atlas.png
-size: 114, 253
+size: 117, 1779
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+card_down_0
+  rotate: false
+  xy: 46, 1213
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+card_down_1
+  rotate: false
+  xy: 2, 1277
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+card_down_2
+  rotate: false
+  xy: 2, 253
+  size: 46, 58
+  orig: 46, 58
+  offset: 0, 0
+  index: -1
+cardman_0
+  rotate: false
+  xy: 50, 253
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+cardman_1
+  rotate: false
+  xy: 2, 313
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+cardman_2
+  rotate: false
+  xy: 55, 313
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
+cardman_up_idle
+  rotate: false
+  xy: 2, 373
+  size: 44, 58
+  orig: 44, 58
+  offset: 0, 0
+  index: -1
+cardman_up_run_0
+  rotate: false
+  xy: 52, 1533
+  size: 46, 66
+  orig: 46, 66
+  offset: 0, 0
+  index: -1
+cardman_up_run_1
+  rotate: false
+  xy: 2, 1601
+  size: 46, 66
+  orig: 46, 66
+  offset: 0, 0
+  index: -1
+club_down_idle
+  rotate: false
+  xy: 48, 373
+  size: 46, 58
+  orig: 46, 58
+  offset: 0, 0
+  index: -1
+club_down_run_0
+  rotate: false
+  xy: 52, 1277
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+club_down_run_1
+  rotate: false
+  xy: 2, 1341
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+club_left_idle
+  rotate: false
+  xy: 2, 433
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+club_left_run_0
+  rotate: false
+  xy: 55, 433
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+club_left_run_1
+  rotate: false
+  xy: 2, 493
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
+club_right_idle
+  rotate: false
+  xy: 46, 493
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+club_right_run_0
+  rotate: false
+  xy: 2, 553
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+club_right_run_1
+  rotate: false
+  xy: 64, 553
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
+diamond_down_idle
+  rotate: false
+  xy: 2, 613
+  size: 46, 58
+  orig: 46, 58
+  offset: 0, 0
+  index: -1
+diamond_down_run_0
+  rotate: false
+  xy: 52, 1341
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+diamond_down_run_1
+  rotate: false
+  xy: 2, 1405
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+diamond_left_idle
+  rotate: false
+  xy: 50, 613
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+diamond_left_run_0
+  rotate: false
+  xy: 2, 673
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+diamond_left_run_1
+  rotate: false
+  xy: 64, 673
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
+diamond_right_idle
+  rotate: false
+  xy: 2, 733
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+diamond_right_run_0
+  rotate: false
+  xy: 55, 733
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+diamond_right_run_1
+  rotate: false
+  xy: 2, 793
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
 dpad_down_down
   rotate: false
-  xy: 2, 2
+  xy: 2, 141
   size: 42, 54
   orig: 42, 54
   offset: 0, 0
   index: -1
 dpad_down_up
   rotate: false
-  xy: 46, 2
+  xy: 46, 141
   size: 42, 54
   orig: 42, 54
   offset: 0, 0
   index: -1
 dpad_left_down
   rotate: false
-  xy: 2, 58
+  xy: 2, 2
   size: 54, 42
   orig: 54, 42
   offset: 0, 0
   index: -1
 dpad_left_up
   rotate: false
-  xy: 58, 58
+  xy: 58, 2
   size: 54, 42
   orig: 54, 42
   offset: 0, 0
   index: -1
 dpad_right_down
   rotate: false
-  xy: 2, 102
+  xy: 2, 46
   size: 54, 42
   orig: 54, 42
   offset: 0, 0
   index: -1
 dpad_right_up
   rotate: false
-  xy: 58, 102
+  xy: 58, 46
   size: 54, 42
   orig: 54, 42
   offset: 0, 0
   index: -1
 dpad_up_down
   rotate: false
-  xy: 2, 146
+  xy: 2, 197
   size: 42, 54
   orig: 42, 54
   offset: 0, 0
   index: -1
 dpad_up_up
   rotate: false
-  xy: 46, 146
+  xy: 46, 197
   size: 42, 54
   orig: 42, 54
   offset: 0, 0
   index: -1
 face_button_down
   rotate: false
-  xy: 2, 202
+  xy: 2, 90
   size: 49, 49
   orig: 49, 49
   offset: 0, 0
   index: -1
 face_button_up
   rotate: false
-  xy: 53, 202
+  xy: 53, 90
   size: 49, 49
   orig: 49, 49
+  offset: 0, 0
+  index: -1
+grassy_checkers
+  rotate: false
+  xy: 2, 1669
+  size: 108, 108
+  orig: 108, 108
+  offset: 0, 0
+  index: -1
+heart_down_idle
+  rotate: false
+  xy: 46, 793
+  size: 46, 58
+  orig: 46, 58
+  offset: 0, 0
+  index: -1
+heart_down_run_0
+  rotate: false
+  xy: 52, 1405
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+heart_down_run_1
+  rotate: false
+  xy: 2, 1469
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+heart_left_idle
+  rotate: false
+  xy: 2, 853
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+heart_left_run_0
+  rotate: false
+  xy: 55, 853
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+heart_left_run_1
+  rotate: false
+  xy: 2, 913
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
+heart_right_idle
+  rotate: false
+  xy: 46, 913
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+heart_right_run_0
+  rotate: false
+  xy: 2, 973
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+heart_right_run_1
+  rotate: false
+  xy: 64, 973
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
+spade_down_idle
+  rotate: false
+  xy: 2, 1033
+  size: 46, 58
+  orig: 46, 58
+  offset: 0, 0
+  index: -1
+spade_down_run_0
+  rotate: false
+  xy: 52, 1469
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+spade_down_run_1
+  rotate: false
+  xy: 2, 1533
+  size: 48, 62
+  orig: 48, 62
+  offset: 0, 0
+  index: -1
+spade_left_idle
+  rotate: false
+  xy: 50, 1033
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+spade_left_run_0
+  rotate: false
+  xy: 2, 1093
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+spade_left_run_1
+  rotate: false
+  xy: 64, 1093
+  size: 42, 58
+  orig: 42, 58
+  offset: 0, 0
+  index: -1
+spade_right_idle
+  rotate: false
+  xy: 2, 1153
+  size: 51, 58
+  orig: 51, 58
+  offset: 0, 0
+  index: -1
+spade_right_run_0
+  rotate: false
+  xy: 55, 1153
+  size: 60, 58
+  orig: 60, 58
+  offset: 0, 0
+  index: -1
+spade_right_run_1
+  rotate: false
+  xy: 2, 1213
+  size: 42, 58
+  orig: 42, 58
   offset: 0, 0
   index: -1

@@ -10,6 +10,12 @@
 #include "gng_audio.c"
 
 #include "hitbox/hitbox.c"
+#include "ace_of_blades/ace_of_blades.c"
+
+typedef struct key_path_pair {
+    char *key;
+    char *path;
+} key_path_pair;
 
 void loadTextureOnGPU (mem_arena *renderMemory, u32 id, u32 width, u32 height, u8 *pixels) {
     render_cmd_header *header = (render_cmd_header *)allocMemory(renderMemory, sizeof(render_cmd_header));
@@ -214,6 +220,8 @@ UPDATE_GNG_GAME(updateGNGGame) {
 
         asset_to_load_list *assetList = &state->assetMan.assetToLoadList;
 
+        initAceOfBlades(&state->aobState, &state->memory);
+
         // TODO: preprocessed string IDs
         asset_to_load_listPush(assetList, (asset_to_load){
             .name = "atlas_data",
@@ -236,6 +244,29 @@ UPDATE_GNG_GAME(updateGNGGame) {
             .loaded = false,
             .key = "font"
         });
+
+        key_path_pair hitboxFiles[] = {
+            {.key = "cardman_up_idle", .path = "assets/hitbox/cardman_up_idle.txt" },
+            {.key = "cardman_up_run", .path = "assets/hitbox/cardman_up_run.txt" },
+            {.key = "spade_down_idle", .path = "assets/hitbox/spade_down_idle.txt" },
+            {.key = "spade_down_run", .path = "assets/hitbox/spade_down_run.txt" },
+            {.key = "spade_left_idle", .path = "assets/hitbox/spade_left_idle.txt" },
+            {.key = "spade_left_run", .path = "assets/hitbox/spade_left_run.txt" },
+            {.key = "spade_right_idle", .path = "assets/hitbox/spade_right_idle.txt" },
+            {.key = "spade_right_run", .path = "assets/hitbox/spade_right_run.txt" }
+        };
+        u32 numHitboxFiles = sizeof(hitboxFiles) / sizeof(key_path_pair);
+        for (u32 hitboxIndex = 0; hitboxIndex < numHitboxFiles; hitboxIndex++) {
+            key_path_pair *kpPair = &hitboxFiles[hitboxIndex];
+            asset_to_load_listPush(assetList, (asset_to_load){
+                .name = kpPair->key,
+                .path = kpPair->path,
+                .type = ASSET_TO_LOAD_TYPE_DATA,
+                .loaded = false,
+                .key = kpPair->key
+            });
+        }
+
 
         for (u32 assetIndex = 0; assetIndex < assetList->numValues; ++assetIndex) {
             asset_to_load *asset = &assetList->values[assetIndex];
@@ -338,8 +369,8 @@ UPDATE_GNG_GAME(updateGNGGame) {
     f32 screenWidth = (f32)platAPI.windowWidth;
     f32 screenHeight = (f32)platAPI.windowHeight;
 
-    f32 gameWidth = 520.0f;
-    f32 gameHeight = 240.0f;
+    f32 gameWidth = 480.0f;
+    f32 gameHeight = 270.0f;
     f32 normalAspectRatio = gameWidth / gameHeight;
 
     f32 actualAspectRatio = screenWidth / screenHeight;
@@ -386,6 +417,7 @@ UPDATE_GNG_GAME(updateGNGGame) {
             remainingTime -= updateDelta;
             
             // update
+            updateAceOfBlades(input, &state->vInput, timeStep, &state->memory);
 
             resetInput(input, &state->vInput);
         }
@@ -394,6 +426,7 @@ UPDATE_GNG_GAME(updateGNGGame) {
         spriteManPushTransform((sprite_transform){ .pos = gameOrigin, .scale = gameScale });
 
         // draw
+        drawAceOfBlades(platAPI, gameScale);
 
         spriteManPopMatrix();
 

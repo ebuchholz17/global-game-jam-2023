@@ -27,6 +27,23 @@ f32 cos2PI (f32 x) {
     return fastCos2PI(x);
 }
 
+// TODO: better srt
+float sqrtF32 (f32 num) {
+    if (num < 0.0f) {
+        return -1.0f; // error
+    }
+    f32 error = 0.00000001f * num;
+
+    f32 estimate = num;
+    f32 test;
+    do {
+        estimate = (num / estimate + estimate) / 2.0f;
+        test = estimate - (num / estimate);
+        if (test < 0) { test = -test; }
+    } while (test > error);
+    return estimate;
+}
+
 mat3x3 mat3x3MatrixMul (mat3x3 a, mat3x3 b) {
     mat3x3 result = {
         .m[0] = a.m[0]*b.m[0] + a.m[1]*b.m[3] + a.m[2]*b.m[6],
@@ -194,6 +211,19 @@ f32 vec2Dot (vec2 a, vec2 b) {
     return a.x * b.x + a.y * b.y;
 }
 
+f32 vec2LengthSqr (vec2 a) {
+    return vec2Dot(a, a);
+}
+
+f32 vec2Length (vec2 a) {
+    return sqrtF32(vec2LengthSqr(a));
+}
+
+vec2 vec2Normalize (vec2 a) {
+    return vec2ScalarMul((1.0f / vec2Length(a)), a);
+}
+
+
 // shortcuts for using mat3x3's with vec2's
 vec2 vec2Mat3x3Mul (mat3x3 m, vec2 v){
     vec2 result = {
@@ -316,7 +346,6 @@ b32 rectsIntersect (rect a, rect b) {
     return true;
 }
 
-// TODO: implement sqrt
 //f32 vec3Length (vec3 a) {
 //    return sqrtf(vec3LengthSqr(a));
 //}

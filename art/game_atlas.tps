@@ -173,6 +173,149 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">game_atlas/card_down_0.png</key>
+            <key type="filename">game_atlas/card_down_1.png</key>
+            <key type="filename">game_atlas/club_down_run_0.png</key>
+            <key type="filename">game_atlas/club_down_run_1.png</key>
+            <key type="filename">game_atlas/diamond_down_run_0.png</key>
+            <key type="filename">game_atlas/diamond_down_run_1.png</key>
+            <key type="filename">game_atlas/heart_down_run_0.png</key>
+            <key type="filename">game_atlas/heart_down_run_1.png</key>
+            <key type="filename">game_atlas/spade_down_run_0.png</key>
+            <key type="filename">game_atlas/spade_down_run_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,16,24,31</rect>
+                <key>scale9Paddings</key>
+                <rect>12,16,24,31</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/card_down_2.png</key>
+            <key type="filename">game_atlas/club_down_idle.png</key>
+            <key type="filename">game_atlas/diamond_down_idle.png</key>
+            <key type="filename">game_atlas/heart_down_idle.png</key>
+            <key type="filename">game_atlas/spade_down_idle.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,15,23,29</rect>
+                <key>scale9Paddings</key>
+                <rect>12,15,23,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/cardman_0.png</key>
+            <key type="filename">game_atlas/club_left_run_0.png</key>
+            <key type="filename">game_atlas/club_right_run_0.png</key>
+            <key type="filename">game_atlas/diamond_left_run_0.png</key>
+            <key type="filename">game_atlas/diamond_right_run_0.png</key>
+            <key type="filename">game_atlas/heart_left_run_0.png</key>
+            <key type="filename">game_atlas/heart_right_run_0.png</key>
+            <key type="filename">game_atlas/spade_left_run_0.png</key>
+            <key type="filename">game_atlas/spade_right_run_0.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>15,15,30,29</rect>
+                <key>scale9Paddings</key>
+                <rect>15,15,30,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/cardman_1.png</key>
+            <key type="filename">game_atlas/club_left_idle.png</key>
+            <key type="filename">game_atlas/club_right_idle.png</key>
+            <key type="filename">game_atlas/diamond_left_idle.png</key>
+            <key type="filename">game_atlas/diamond_right_idle.png</key>
+            <key type="filename">game_atlas/heart_left_idle.png</key>
+            <key type="filename">game_atlas/heart_right_idle.png</key>
+            <key type="filename">game_atlas/spade_left_idle.png</key>
+            <key type="filename">game_atlas/spade_right_idle.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>13,15,25,29</rect>
+                <key>scale9Paddings</key>
+                <rect>13,15,25,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/cardman_2.png</key>
+            <key type="filename">game_atlas/club_left_run_1.png</key>
+            <key type="filename">game_atlas/club_right_run_1.png</key>
+            <key type="filename">game_atlas/diamond_left_run_1.png</key>
+            <key type="filename">game_atlas/diamond_right_run_1.png</key>
+            <key type="filename">game_atlas/heart_left_run_1.png</key>
+            <key type="filename">game_atlas/heart_right_run_1.png</key>
+            <key type="filename">game_atlas/spade_left_run_1.png</key>
+            <key type="filename">game_atlas/spade_right_run_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>11,15,21,29</rect>
+                <key>scale9Paddings</key>
+                <rect>11,15,21,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/cardman_up_idle.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>11,15,22,29</rect>
+                <key>scale9Paddings</key>
+                <rect>11,15,22,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/cardman_up_run_0.png</key>
+            <key type="filename">game_atlas/cardman_up_run_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,17,23,33</rect>
+                <key>scale9Paddings</key>
+                <rect>12,17,23,33</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">game_atlas/dpad_down_down.png</key>
             <key type="filename">game_atlas/dpad_down_up.png</key>
             <key type="filename">game_atlas/dpad_up_down.png</key>
@@ -222,6 +365,21 @@
                 <rect>12,12,25,25</rect>
                 <key>scale9Paddings</key>
                 <rect>12,12,25,25</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/grassy_checkers.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>27,27,54,54</rect>
+                <key>scale9Paddings</key>
+                <rect>27,27,54,54</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
