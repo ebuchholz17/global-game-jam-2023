@@ -173,6 +173,95 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">game_atlas/a_key_prompt.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>6,6,11,13</rect>
+                <key>scale9Paddings</key>
+                <rect>6,6,11,13</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/black_10.png</key>
+            <key type="filename">game_atlas/red_10.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>1,2,3,3</rect>
+                <key>scale9Paddings</key>
+                <rect>1,2,3,3</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/black_2.png</key>
+            <key type="filename">game_atlas/black_3.png</key>
+            <key type="filename">game_atlas/black_4.png</key>
+            <key type="filename">game_atlas/black_5.png</key>
+            <key type="filename">game_atlas/black_6.png</key>
+            <key type="filename">game_atlas/black_7.png</key>
+            <key type="filename">game_atlas/black_8.png</key>
+            <key type="filename">game_atlas/black_9.png</key>
+            <key type="filename">game_atlas/black_a.png</key>
+            <key type="filename">game_atlas/black_j.png</key>
+            <key type="filename">game_atlas/black_k.png</key>
+            <key type="filename">game_atlas/black_q.png</key>
+            <key type="filename">game_atlas/red_2.png</key>
+            <key type="filename">game_atlas/red_3.png</key>
+            <key type="filename">game_atlas/red_4.png</key>
+            <key type="filename">game_atlas/red_5.png</key>
+            <key type="filename">game_atlas/red_6.png</key>
+            <key type="filename">game_atlas/red_7.png</key>
+            <key type="filename">game_atlas/red_8.png</key>
+            <key type="filename">game_atlas/red_9.png</key>
+            <key type="filename">game_atlas/red_a.png</key>
+            <key type="filename">game_atlas/red_j.png</key>
+            <key type="filename">game_atlas/red_k.png</key>
+            <key type="filename">game_atlas/red_q.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>1,2,2,3</rect>
+                <key>scale9Paddings</key>
+                <rect>1,2,2,3</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/card_back.png</key>
+            <key type="filename">game_atlas/club_card.png</key>
+            <key type="filename">game_atlas/diamond_card.png</key>
+            <key type="filename">game_atlas/foundation.bmp</key>
+            <key type="filename">game_atlas/heart_card.png</key>
+            <key type="filename">game_atlas/spade_card.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,11,16,23</rect>
+                <key>scale9Paddings</key>
+                <rect>8,11,16,23</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">game_atlas/card_down_0.png</key>
             <key type="filename">game_atlas/card_down_1.png</key>
             <key type="filename">game_atlas/club_down_run_0.png</key>
@@ -300,6 +389,51 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">game_atlas/cardman_up_katana_0.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>13,25,25,49</rect>
+                <key>scale9Paddings</key>
+                <rect>13,25,25,49</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/cardman_up_katana_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>15,22,29,44</rect>
+                <key>scale9Paddings</key>
+                <rect>15,22,29,44</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/cardman_up_katana_2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>11,16,22,33</rect>
+                <key>scale9Paddings</key>
+                <rect>11,16,22,33</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">game_atlas/cardman_up_run_0.png</key>
             <key type="filename">game_atlas/cardman_up_run_1.png</key>
             <struct type="IndividualSpriteSettings">
@@ -313,6 +447,79 @@
                 <rect>12,17,23,33</rect>
                 <key>scale9Paddings</key>
                 <rect>12,17,23,33</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/club_left_hitstun.png</key>
+            <key type="filename">game_atlas/club_right_hitstun.png</key>
+            <key type="filename">game_atlas/diamond_left_hitstun.png</key>
+            <key type="filename">game_atlas/diamond_right_hitstun.png</key>
+            <key type="filename">game_atlas/heart_left_hitstun.png</key>
+            <key type="filename">game_atlas/heart_right_hitstun.png</key>
+            <key type="filename">game_atlas/spade_left_hitstun.png</key>
+            <key type="filename">game_atlas/spade_right_hitstun.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>14,15,27,29</rect>
+                <key>scale9Paddings</key>
+                <rect>14,15,27,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/club_play_card_0.png</key>
+            <key type="filename">game_atlas/diamond_play_card_0.png</key>
+            <key type="filename">game_atlas/heart_play_card_0.png</key>
+            <key type="filename">game_atlas/spade_play_card_0.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,13,21,25</rect>
+                <key>scale9Paddings</key>
+                <rect>10,13,21,25</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/club_play_card_1.png</key>
+            <key type="filename">game_atlas/diamond_play_card_1.png</key>
+            <key type="filename">game_atlas/heart_play_card_1.png</key>
+            <key type="filename">game_atlas/spade_play_card_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,15,32,30</rect>
+                <key>scale9Paddings</key>
+                <rect>16,15,32,30</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/deck_rect.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>34,37,67,74</rect>
+                <key>scale9Paddings</key>
+                <rect>34,37,67,74</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -380,6 +587,130 @@
                 <rect>27,27,54,54</rect>
                 <key>scale9Paddings</key>
                 <rect>27,27,54,54</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/hitbox_frame_data.png</key>
+            <key type="filename">game_atlas/hurtbox_frame_data.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>3,3,5,5</rect>
+                <key>scale9Paddings</key>
+                <rect>3,3,5,5</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/right_button_prompt.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>7,7,15,14</rect>
+                <key>scale9Paddings</key>
+                <rect>7,7,15,14</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/spade_down_katana_0.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>14,14,27,29</rect>
+                <key>scale9Paddings</key>
+                <rect>14,14,27,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/spade_down_katana_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>15,18,29,36</rect>
+                <key>scale9Paddings</key>
+                <rect>15,18,29,36</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/spade_down_katana_2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>13,15,27,29</rect>
+                <key>scale9Paddings</key>
+                <rect>13,15,27,29</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/spade_left_katana_0.png</key>
+            <key type="filename">game_atlas/spade_right_katana_0.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,23,25,45</rect>
+                <key>scale9Paddings</key>
+                <rect>12,23,25,45</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/spade_left_katana_1.png</key>
+            <key type="filename">game_atlas/spade_right_katana_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>19,16,39,33</rect>
+                <key>scale9Paddings</key>
+                <rect>19,16,39,33</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">game_atlas/spade_left_katana_2.png</key>
+            <key type="filename">game_atlas/spade_right_katana_2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>13,17,25,33</rect>
+                <key>scale9Paddings</key>
+                <rect>13,17,25,33</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

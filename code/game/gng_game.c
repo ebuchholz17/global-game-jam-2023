@@ -206,6 +206,20 @@ void resetInput (game_input *input, virtual_input *vInput) {
 UPDATE_GNG_GAME(updateGNGGame) {
     gng_game_state *state = (gng_game_state *)platAPI.mainMemory;
 
+    mem_arena scratchMemory = {
+        .base = platAPI.scratchMemory,
+        .current = platAPI.scratchMemory,
+        .capacity = platAPI.scratchMemorySize
+    };
+
+    u64 tempStringMemoryCapcity = 1 * 1024 * 1024;
+    void *tempStringMemoryBase = allocMemory(&scratchMemory, tempStringMemoryCapcity); 
+    tempStringMemory = (mem_arena){
+        .base = tempStringMemoryBase,
+        .current = tempStringMemoryBase,
+        .capacity = tempStringMemoryCapcity
+    };
+
     if (!state->initialized) {
         state->initialized = true;
 
@@ -219,8 +233,6 @@ UPDATE_GNG_GAME(updateGNGGame) {
         initGameAssets(&state->assetMan, &platAPI);
 
         asset_to_load_list *assetList = &state->assetMan.assetToLoadList;
-
-        initAceOfBlades(&state->aobState, &state->memory);
 
         // TODO: preprocessed string IDs
         asset_to_load_listPush(assetList, (asset_to_load){
@@ -253,7 +265,50 @@ UPDATE_GNG_GAME(updateGNGGame) {
             {.key = "spade_left_idle", .path = "assets/hitbox/spade_left_idle.txt" },
             {.key = "spade_left_run", .path = "assets/hitbox/spade_left_run.txt" },
             {.key = "spade_right_idle", .path = "assets/hitbox/spade_right_idle.txt" },
-            {.key = "spade_right_run", .path = "assets/hitbox/spade_right_run.txt" }
+            {.key = "spade_right_run", .path = "assets/hitbox/spade_right_run.txt" },
+            {.key = "club_down_idle", .path = "assets/hitbox/club_down_idle.txt" },
+            {.key = "club_down_run", .path = "assets/hitbox/club_down_run.txt" },
+            {.key = "club_left_idle", .path = "assets/hitbox/club_left_idle.txt" },
+            {.key = "club_left_run", .path = "assets/hitbox/club_left_run.txt" },
+            {.key = "club_right_idle", .path = "assets/hitbox/club_right_idle.txt" },
+            {.key = "club_right_run", .path = "assets/hitbox/club_right_run.txt" },
+            {.key = "diamond_down_idle", .path = "assets/hitbox/diamond_down_idle.txt" },
+            {.key = "diamond_down_run", .path = "assets/hitbox/diamond_down_run.txt" },
+            {.key = "diamond_left_idle", .path = "assets/hitbox/diamond_left_idle.txt" },
+            {.key = "diamond_left_run", .path = "assets/hitbox/diamond_left_run.txt" },
+            {.key = "diamond_right_idle", .path = "assets/hitbox/diamond_right_idle.txt" },
+            {.key = "diamond_right_run", .path = "assets/hitbox/diamond_right_run.txt" },
+            {.key = "heart_down_idle", .path = "assets/hitbox/heart_down_idle.txt" },
+            {.key = "heart_down_run", .path = "assets/hitbox/heart_down_run.txt" },
+            {.key = "heart_left_idle", .path = "assets/hitbox/heart_left_idle.txt" },
+            {.key = "heart_left_run", .path = "assets/hitbox/heart_left_run.txt" },
+            {.key = "heart_right_idle", .path = "assets/hitbox/heart_right_idle.txt" },
+            {.key = "heart_right_run", .path = "assets/hitbox/heart_right_run.txt" },
+
+
+            {.key = "spade_left_hitstun", .path = "assets/hitbox/spade_left_hitstun.txt" },
+            {.key = "spade_right_hitstun", .path = "assets/hitbox/spade_right_hitstun.txt" },
+            {.key = "club_left_hitstun", .path = "assets/hitbox/club_left_hitstun.txt" },
+            {.key = "club_right_hitstun", .path = "assets/hitbox/club_right_hitstun.txt" },
+            {.key = "diamond_left_hitstun", .path = "assets/hitbox/diamond_left_hitstun.txt" },
+            {.key = "diamond_right_hitstun", .path = "assets/hitbox/diamond_right_hitstun.txt" },
+            {.key = "heart_left_hitstun", .path = "assets/hitbox/heart_left_hitstun.txt" },
+            {.key = "heart_right_hitstun", .path = "assets/hitbox/heart_right_hitstun.txt" },
+
+            {.key = "cardman_up_katana_0", .path = "assets/hitbox/cardman_up_katana_0.txt" },
+            {.key = "spade_down_katana_0", .path = "assets/hitbox/spade_down_katana_0.txt" },
+            {.key = "spade_left_katana_0", .path = "assets/hitbox/spade_left_katana_0.txt" },
+            {.key = "spade_right_katana_0", .path = "assets/hitbox/spade_right_katana_0.txt" },
+
+
+            {.key = "spade_play_card_0", .path = "assets/hitbox/spade_play_card_0.txt" },
+            {.key = "spade_play_card_1", .path = "assets/hitbox/spade_play_card_1.txt" },
+            {.key = "club_play_card_0", .path = "assets/hitbox/club_play_card_0.txt" },
+            {.key = "club_play_card_1", .path = "assets/hitbox/club_play_card_1.txt" },
+            {.key = "diamond_play_card_0", .path = "assets/hitbox/diamond_play_card_0.txt" },
+            {.key = "diamond_play_card_1", .path = "assets/hitbox/diamond_play_card_1.txt" },
+            {.key = "heart_play_card_0", .path = "assets/hitbox/heart_play_card_0.txt" },
+            {.key = "heart_play_card_1", .path = "assets/hitbox/heart_play_card_1.txt" },
         };
         u32 numHitboxFiles = sizeof(hitboxFiles) / sizeof(key_path_pair);
         for (u32 hitboxIndex = 0; hitboxIndex < numHitboxFiles; hitboxIndex++) {
@@ -279,20 +334,6 @@ UPDATE_GNG_GAME(updateGNGGame) {
         platAPI.consoleLog("game ready");
 
     }
-
-    mem_arena scratchMemory = {
-        .base = platAPI.scratchMemory,
-        .current = platAPI.scratchMemory,
-        .capacity = platAPI.scratchMemorySize
-    };
-
-    u64 tempStringMemoryCapcity = 1 * 1024 * 1024;
-    void *tempStringMemoryBase = allocMemory(&scratchMemory, tempStringMemoryCapcity); 
-    tempStringMemory = (mem_arena){
-        .base = tempStringMemoryBase,
-        .current = tempStringMemoryBase,
-        .capacity = tempStringMemoryCapcity
-    };
 
     spriteMan->sprites = sprite_listInit(&scratchMemory, SPRITE_LIST_MAX_NUM_SPRITES);
     spriteMan->matrixStackIndex = 0;
@@ -369,8 +410,8 @@ UPDATE_GNG_GAME(updateGNGGame) {
     f32 screenWidth = (f32)platAPI.windowWidth;
     f32 screenHeight = (f32)platAPI.windowHeight;
 
-    f32 gameWidth = 480.0f;
-    f32 gameHeight = 270.0f;
+    f32 gameWidth = 640.0f;
+    f32 gameHeight = 360.0f;
     f32 normalAspectRatio = gameWidth / gameHeight;
 
     f32 actualAspectRatio = screenWidth / screenHeight;
@@ -396,6 +437,11 @@ UPDATE_GNG_GAME(updateGNGGame) {
 
 
     if (state->assetMan.allFilesLoaded) {
+
+        if (!state->aobState.initialized) {
+            initAceOfBlades(&state->aobState, &state->memory);
+        }
+
         if (platAPI.hasTouchControls) {
             setVirtualInput(&state->vInput, input, &platAPI);
         }
@@ -417,110 +463,109 @@ UPDATE_GNG_GAME(updateGNGGame) {
             remainingTime -= updateDelta;
             
             // update
-            updateAceOfBlades(input, &state->vInput, timeStep, &state->memory);
+            updateAceOfBlades(input, &state->vInput, timeStep, &state->memory, &scratchMemory);
 
             resetInput(input, &state->vInput);
         }
 
+        if (!(platAPI.windowWidth == 0 && platAPI.windowHeight ==0)) {
+            spriteManPushTransform((sprite_transform){ .pos = gameOrigin, .scale = gameScale });
 
-        spriteManPushTransform((sprite_transform){ .pos = gameOrigin, .scale = gameScale });
+            // draw
+            drawAceOfBlades(platAPI, gameScale, &scratchMemory);
 
-        // draw
-        drawAceOfBlades(platAPI, gameScale);
+            spriteManPopMatrix();
 
-        spriteManPopMatrix();
+            if (platAPI.hasTouchControls) {
 
+                virtual_input *vInput = &state->vInput;
+                sprite testButtonSprite = defaultSprite();
+                testButtonSprite.atlasKey = "atlas";
+                testButtonSprite.scale = 1.0f;
+                testButtonSprite.alpha = 0.5f;
 
-        if (platAPI.hasTouchControls) {
+                if (vInput->dPadUp.button.down) {
+                    testButtonSprite.frameKey = "dpad_up_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "dpad_up_up";
+                }
+                testButtonSprite.pos.x = vInput->dPadUp.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->dPadUp.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
+                
+                if (vInput->dPadDown.button.down) {
+                    testButtonSprite.frameKey = "dpad_down_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "dpad_down_up";
+                }
+                testButtonSprite.pos.x = vInput->dPadDown.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->dPadDown.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
 
-            virtual_input *vInput = &state->vInput;
-            sprite testButtonSprite = defaultSprite();
-            testButtonSprite.atlasKey = "atlas";
-            testButtonSprite.scale = 1.0f;
-            testButtonSprite.alpha = 0.5f;
+                if (vInput->dPadLeft.button.down) {
+                    testButtonSprite.frameKey = "dpad_left_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "dpad_left_up";
+                }
+                testButtonSprite.pos.x = vInput->dPadLeft.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->dPadLeft.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
 
-            if (vInput->dPadUp.button.down) {
-                testButtonSprite.frameKey = "dpad_up_down";
-            }
-            else {
-                testButtonSprite.frameKey = "dpad_up_up";
-            }
-            testButtonSprite.pos.x = vInput->dPadUp.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->dPadUp.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
-            
-            if (vInput->dPadDown.button.down) {
-                testButtonSprite.frameKey = "dpad_down_down";
-            }
-            else {
-                testButtonSprite.frameKey = "dpad_down_up";
-            }
-            testButtonSprite.pos.x = vInput->dPadDown.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->dPadDown.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
+                if (vInput->dPadRight.button.down) {
+                    testButtonSprite.frameKey = "dpad_right_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "dpad_right_up";
+                }
+                testButtonSprite.pos.x = vInput->dPadRight.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->dPadRight.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
 
-            if (vInput->dPadLeft.button.down) {
-                testButtonSprite.frameKey = "dpad_left_down";
-            }
-            else {
-                testButtonSprite.frameKey = "dpad_left_up";
-            }
-            testButtonSprite.pos.x = vInput->dPadLeft.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->dPadLeft.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
+                if (vInput->topButton.button.down) {
+                    testButtonSprite.frameKey = "face_button_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "face_button_up";
+                }
+                testButtonSprite.pos.x = vInput->topButton.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->topButton.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
+                
+                if (vInput->bottomButton.button.down) {
+                    testButtonSprite.frameKey = "face_button_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "face_button_up";
+                }
+                testButtonSprite.pos.x = vInput->bottomButton.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->bottomButton.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
 
-            if (vInput->dPadRight.button.down) {
-                testButtonSprite.frameKey = "dpad_right_down";
-            }
-            else {
-                testButtonSprite.frameKey = "dpad_right_up";
-            }
-            testButtonSprite.pos.x = vInput->dPadRight.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->dPadRight.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
+                if (vInput->leftButton.button.down) {
+                    testButtonSprite.frameKey = "face_button_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "face_button_up";
+                }
+                testButtonSprite.pos.x = vInput->leftButton.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->leftButton.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
 
-            if (vInput->topButton.button.down) {
-                testButtonSprite.frameKey = "face_button_down";
-            }
-            else {
-                testButtonSprite.frameKey = "face_button_up";
-            }
-            testButtonSprite.pos.x = vInput->topButton.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->topButton.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
-            
-            if (vInput->bottomButton.button.down) {
-                testButtonSprite.frameKey = "face_button_down";
-            }
-            else {
-                testButtonSprite.frameKey = "face_button_up";
-            }
-            testButtonSprite.pos.x = vInput->bottomButton.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->bottomButton.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
-
-            if (vInput->leftButton.button.down) {
-                testButtonSprite.frameKey = "face_button_down";
-            }
-            else {
-                testButtonSprite.frameKey = "face_button_up";
-            }
-            testButtonSprite.pos.x = vInput->leftButton.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->leftButton.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
-
-            if (vInput->rightButton.button.down) {
-                testButtonSprite.frameKey = "face_button_down";
-            }
-            else {
-                testButtonSprite.frameKey = "face_button_up";
-            }
-            testButtonSprite.pos.x = vInput->rightButton.boundingBox.min.x;
-            testButtonSprite.pos.y = vInput->rightButton.boundingBox.min.y;
-            spriteManAddSprite(testButtonSprite);
+                if (vInput->rightButton.button.down) {
+                    testButtonSprite.frameKey = "face_button_down";
+                }
+                else {
+                    testButtonSprite.frameKey = "face_button_up";
+                }
+                testButtonSprite.pos.x = vInput->rightButton.boundingBox.min.x;
+                testButtonSprite.pos.y = vInput->rightButton.boundingBox.min.y;
+                spriteManAddSprite(testButtonSprite);
 
 
-        }
+            }
     }
 
 
@@ -612,6 +657,8 @@ UPDATE_GNG_GAME(updateGNGGame) {
     }
 
     spriteBatchEnd(renderMemory);
+        }
+
 }
 
 GET_SOUND_SAMPLES_GNG_GAME(getSoundSamplesGNGGame) {

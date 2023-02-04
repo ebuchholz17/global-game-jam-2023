@@ -16,6 +16,7 @@ typedef struct char_frame_data {
 } char_frame_data;
 
 typedef struct char_anim_data {
+    char *key;
     char_frame_data frames[20];
     u32 numFrames;
 } char_anim_data;

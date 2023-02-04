@@ -32,15 +32,17 @@ float sqrtF32 (f32 num) {
     if (num < 0.0f) {
         return -1.0f; // error
     }
-    f32 error = 0.00000001f * num;
+    f32 error = 0.00001f * num;
 
     f32 estimate = num;
     f32 test;
+    u32 iterations = 0;
     do {
+        ++iterations;
         estimate = (num / estimate + estimate) / 2.0f;
         test = estimate - (num / estimate);
         if (test < 0) { test = -test; }
-    } while (test > error);
+    } while (test > error && iterations < 50);
     return estimate;
 }
 
