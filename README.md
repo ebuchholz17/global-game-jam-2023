@@ -1,1 +1,1 @@
-- [Play Ace of Blades](https://ebuchholz17.github.io/global-game-jam-2032/aob/index.html)
+- [Play Ace of Blades](https://ebuchholz17.github.io/global-game-jam-2023/aob/index.html)
