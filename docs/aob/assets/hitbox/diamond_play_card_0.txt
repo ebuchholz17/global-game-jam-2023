@@ -1,0 +1,7 @@
+1
+diamond_play_card_0
+-20
+-7
+1
+0
+0

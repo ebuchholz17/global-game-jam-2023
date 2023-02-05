@@ -499,49 +499,52 @@ void spawnCardmanBullets (cardman *cm) {
 
     f32 damage = getAttackDamageMultiplierForLevel(cm->attackDamageLevel);
     f32 speed = getAttackSpeedMultiplierForLevel(cm->attackSpeedLevel);
+
+    f32 baseDamage = 9.0f;
+
     // spawn bullets
     u32 katanaComb = cm->attack.comboIndex % 3;
     if (katanaComb == 0) {
-        activateBullet(cm->pos, dir, 15.0f, cm->owner, damage, speed);
+        activateBullet(cm->pos, dir, baseDamage, cm->owner, damage, speed);
     }
     else if (katanaComb == 1) {
         if (cm->facing == DIRECTION_RIGHT) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.25f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.25f })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.25f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.25f })), baseDamage, cm->owner, damage, speed);
         }
         else if (cm->facing == DIRECTION_LEFT) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.25f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.25f })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.25f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.25f })), baseDamage, cm->owner, damage, speed);
         }
         else if (cm->facing == DIRECTION_UP) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.25f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.25f, .y = 0.0 })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.25f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.25f, .y = 0.0 })), baseDamage, cm->owner, damage, speed);
         }
         else if (cm->facing == DIRECTION_DOWN) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.25f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.25f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.25f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.25f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
         }
     }
     else if (katanaComb == 2) {
         if (cm->facing == DIRECTION_RIGHT) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.5f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.5f })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.5f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.5f })), baseDamage, cm->owner, damage, speed);
         }
         else if (cm->facing == DIRECTION_LEFT) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.5f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.5f })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = -0.5f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.5f })), baseDamage, cm->owner, damage, speed);
         }
         else if (cm->facing == DIRECTION_UP) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.5f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.5f, .y = 0.0 })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.5f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.5f, .y = 0.0 })), baseDamage, cm->owner, damage, speed);
         }
         else if (cm->facing == DIRECTION_DOWN) {
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.5f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
-            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.5f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = -0.5f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.0f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
+            activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.5f, .y = 0.0f })), baseDamage, cm->owner, damage, speed);
         }
     }
     soundManPlaySound("starSFX");
@@ -2318,7 +2321,7 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
             if (cardsCanMatch(aob->playerCardman->suit, aob->playerCardman->value, topCard.suit, topCard.value)) {
                 sprite buttonPromptSprite = defaultSprite();
                 buttonPromptSprite.pos.x = d->pos.x + 16.0f;
-                buttonPromptSprite.pos.y = d->pos.y - 30.0f;
+                buttonPromptSprite.pos.y = d->pos.y - 25.0f;
                 buttonPromptSprite.anchor = (vec2){ .x = 0.5f, .y = 0.5f };
                 buttonPromptSprite.atlasKey = "atlas";
                 buttonPromptSprite.frameKey = aob->inputSource == INPUT_SOURCE_KEYBOARD ? "a_key_prompt" : "right_button_prompt";

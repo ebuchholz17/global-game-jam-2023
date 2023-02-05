@@ -186,19 +186,19 @@ f32 getEnemySpeedForLevel (u32 level) {
 }
 
 f32 getHitpointsForLevel (u32 level) {
-    return 100.0f + 20.0f * (f32)level;
+    return 100.0f + 10.0f * (f32)level;
 }
 
 f32 getCPUHitpointsForLevel (u32 level) {
-    return 30.0f + 15.0f * (f32)level;
+    return 30.0f + 20.0f * (f32)level;
 }
 
 f32 getDashSpeedForLevel (u32 level) {
-    return 150.0f + 50.0f * (f32)level;
+    return 150.0f + 30.0f * (f32)level;
 }
 
 f32 getBackstepSpeedForLevel (u32 level) {
-    return 100.0f + 50.0f * (f32)level;
+    return 100.0f + 30.0f * (f32)level;
 }
 
 f32 getAttackDamageMultiplierForLevel (u32 level) {
@@ -206,7 +206,7 @@ f32 getAttackDamageMultiplierForLevel (u32 level) {
 }
 
 f32 getAttackSpeedMultiplierForLevel (u32 level) {
-    return 1.0f + 0.2f * (f32)level;
+    return 1.0f + 0.1f * (f32)level;
 }
 
 f32 getKnockbackForLevel (u32 level) {

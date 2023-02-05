@@ -212,7 +212,7 @@ typedef struct cardman_collision {
 #define MAX_NUM_CARDMEN 100
 
 #define CARDMAN_SPEED 150.0f
-#define DIST_TO_PLAY_CARD 200.0f
+#define DIST_TO_PLAY_CARD 150.0f
 #define DIST_TO_PLAY_CARD_TO_DECK 50.0f
 
 typedef struct scratch_mem_save{
