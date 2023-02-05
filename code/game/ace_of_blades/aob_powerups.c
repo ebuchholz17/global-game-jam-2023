@@ -178,11 +178,11 @@ powerup_type getUpgradeTypeForSuitValue ( card_suit suit, card_val value) {
 }
 
 f32 getMoveSpeedForLevel (u32 level) {
-    return 130.0f + 20.0f * (f32)level;
+    return 130.0f + 15.0f * (f32)level;
 }
 
 f32 getEnemySpeedForLevel (u32 level) {
-    return 50.0f + 10.0f * (f32)level;
+    return 50.0f + 15.0f * (f32)level;
 }
 
 f32 getHitpointsForLevel (u32 level) {
@@ -190,7 +190,7 @@ f32 getHitpointsForLevel (u32 level) {
 }
 
 f32 getCPUHitpointsForLevel (u32 level) {
-    return 30.0f + 10.0f * (f32)level;
+    return 30.0f + 15.0f * (f32)level;
 }
 
 f32 getDashSpeedForLevel (u32 level) {

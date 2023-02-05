@@ -247,6 +247,7 @@
             <key type="filename">game_atlas/diamond_card.png</key>
             <key type="filename">game_atlas/foundation.bmp</key>
             <key type="filename">game_atlas/heart_card.png</key>
+            <key type="filename">game_atlas/joker_card.png</key>
             <key type="filename">game_atlas/spade_card.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -270,6 +271,8 @@
             <key type="filename">game_atlas/diamond_down_run_1.png</key>
             <key type="filename">game_atlas/heart_down_run_0.png</key>
             <key type="filename">game_atlas/heart_down_run_1.png</key>
+            <key type="filename">game_atlas/joker_down_run_0.png</key>
+            <key type="filename">game_atlas/joker_down_run_1.png</key>
             <key type="filename">game_atlas/spade_down_run_0.png</key>
             <key type="filename">game_atlas/spade_down_run_1.png</key>
             <struct type="IndividualSpriteSettings">
@@ -290,6 +293,7 @@
             <key type="filename">game_atlas/club_down_idle.png</key>
             <key type="filename">game_atlas/diamond_down_idle.png</key>
             <key type="filename">game_atlas/heart_down_idle.png</key>
+            <key type="filename">game_atlas/joker_down_idle.png</key>
             <key type="filename">game_atlas/spade_down_idle.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -312,6 +316,8 @@
             <key type="filename">game_atlas/diamond_right_run_0.png</key>
             <key type="filename">game_atlas/heart_left_run_0.png</key>
             <key type="filename">game_atlas/heart_right_run_0.png</key>
+            <key type="filename">game_atlas/joker_left_run_0.png</key>
+            <key type="filename">game_atlas/joker_right_run_0.png</key>
             <key type="filename">game_atlas/spade_left_run_0.png</key>
             <key type="filename">game_atlas/spade_right_run_0.png</key>
             <struct type="IndividualSpriteSettings">
@@ -337,6 +343,8 @@
             <key type="filename">game_atlas/diamond_right_idle.png</key>
             <key type="filename">game_atlas/heart_left_idle.png</key>
             <key type="filename">game_atlas/heart_right_idle.png</key>
+            <key type="filename">game_atlas/joker_left_idle.png</key>
+            <key type="filename">game_atlas/joker_right_idle.png</key>
             <key type="filename">game_atlas/spade_left_idle.png</key>
             <key type="filename">game_atlas/spade_right_idle.png</key>
             <struct type="IndividualSpriteSettings">
@@ -360,6 +368,8 @@
             <key type="filename">game_atlas/diamond_right_run_1.png</key>
             <key type="filename">game_atlas/heart_left_run_1.png</key>
             <key type="filename">game_atlas/heart_right_run_1.png</key>
+            <key type="filename">game_atlas/joker_left_run_1.png</key>
+            <key type="filename">game_atlas/joker_right_run_1.png</key>
             <key type="filename">game_atlas/spade_left_run_1.png</key>
             <key type="filename">game_atlas/spade_right_run_1.png</key>
             <struct type="IndividualSpriteSettings">
@@ -623,6 +633,8 @@
             <key type="filename">game_atlas/diamond_right_hitstun.png</key>
             <key type="filename">game_atlas/heart_left_hitstun.png</key>
             <key type="filename">game_atlas/heart_right_hitstun.png</key>
+            <key type="filename">game_atlas/joker_left_hitstun.png</key>
+            <key type="filename">game_atlas/joker_right_hitstun.png</key>
             <key type="filename">game_atlas/spade_left_hitstun.png</key>
             <key type="filename">game_atlas/spade_right_hitstun.png</key>
             <struct type="IndividualSpriteSettings">
@@ -674,6 +686,7 @@
             <key type="filename">game_atlas/club_play_card_0.png</key>
             <key type="filename">game_atlas/diamond_play_card_0.png</key>
             <key type="filename">game_atlas/heart_play_card_0.png</key>
+            <key type="filename">game_atlas/joker_play_card_0.png</key>
             <key type="filename">game_atlas/spade_play_card_0.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -692,6 +705,7 @@
             <key type="filename">game_atlas/club_play_card_1.png</key>
             <key type="filename">game_atlas/diamond_play_card_1.png</key>
             <key type="filename">game_atlas/heart_play_card_1.png</key>
+            <key type="filename">game_atlas/joker_play_card_1.png</key>
             <key type="filename">game_atlas/spade_play_card_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>

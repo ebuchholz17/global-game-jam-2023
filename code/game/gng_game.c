@@ -38,7 +38,6 @@ void spriteBatchEnd (mem_arena *renderMemory) {
     header->type = RENDER_CMD_TYPE_SPRITE_BATCH_END;
 }
 
-
 void resetVirtualButton (virtual_button *vButton) {
     vButton->wasDown = vButton->button.down;
     vButton->button.down = false;
@@ -263,6 +262,48 @@ UPDATE_GNG_GAME(updateGNGGame) {
             .loaded = false,
             .key = "font"
         });
+        asset_to_load_listPush(assetList, (asset_to_load){
+            .name = "starSFX",
+            .path = "assets/star.wav",
+            .type = ASSET_TO_LOAD_TYPE_WAV,
+            .loaded = false,
+            .key = "starSFX"
+        });
+        asset_to_load_listPush(assetList, (asset_to_load){
+            .name = "attack",
+            .path = "assets/attack.wav",
+            .type = ASSET_TO_LOAD_TYPE_WAV,
+            .loaded = false,
+            .key = "attack"
+        });
+        asset_to_load_listPush(assetList, (asset_to_load){
+            .name = "card_flip",
+            .path = "assets/card_flip.wav",
+            .type = ASSET_TO_LOAD_TYPE_WAV,
+            .loaded = false,
+            .key = "card_flip"
+        });
+        asset_to_load_listPush(assetList, (asset_to_load){
+            .name = "dash",
+            .path = "assets/dash.wav",
+            .type = ASSET_TO_LOAD_TYPE_WAV,
+            .loaded = false,
+            .key = "dash"
+        });
+        asset_to_load_listPush(assetList, (asset_to_load){
+            .name = "impact",
+            .path = "assets/impact.wav",
+            .type = ASSET_TO_LOAD_TYPE_WAV,
+            .loaded = false,
+            .key = "impact"
+        });
+        asset_to_load_listPush(assetList, (asset_to_load){
+            .name = "level_up",
+            .path = "assets/level_up.wav",
+            .type = ASSET_TO_LOAD_TYPE_WAV,
+            .loaded = false,
+            .key = "level_up"
+        });
 
         key_path_pair hitboxFiles[] = {
             {.key = "cardman_up_idle", .path = "assets/hitbox/cardman_up_idle.txt" },
@@ -301,6 +342,8 @@ UPDATE_GNG_GAME(updateGNGGame) {
             {.key = "diamond_right_hitstun", .path = "assets/hitbox/diamond_right_hitstun.txt" },
             {.key = "heart_left_hitstun", .path = "assets/hitbox/heart_left_hitstun.txt" },
             {.key = "heart_right_hitstun", .path = "assets/hitbox/heart_right_hitstun.txt" },
+            {.key = "joker_left_hitstun", .path = "assets/hitbox/joker_left_hitstun.txt" },
+            {.key = "joker_right_hitstun", .path = "assets/hitbox/joker_right_hitstun.txt" },
 
             {.key = "cardman_up_katana_0", .path = "assets/hitbox/cardman_up_katana_0.txt" },
             {.key = "spade_down_katana_0", .path = "assets/hitbox/spade_down_katana_0.txt" },
@@ -378,6 +421,15 @@ UPDATE_GNG_GAME(updateGNGGame) {
             {.key = "spade_right_katana_1", .path = "assets/hitbox/spade_right_katana_1.txt" },
             {.key = "spade_right_katana_2", .path = "assets/hitbox/spade_right_katana_2.txt" },
             {.key = "star", .path = "assets/hitbox/star.txt" },
+
+            {.key = "joker_down_idle", .path = "assets/hitbox/joker_down_idle.txt" },
+            {.key = "joker_down_run", .path = "assets/hitbox/joker_down_run.txt" },
+            {.key = "joker_left_idle", .path = "assets/hitbox/joker_left_idle.txt" },
+            {.key = "joker_left_run", .path = "assets/hitbox/joker_left_run.txt" },
+            {.key = "joker_right_idle", .path = "assets/hitbox/joker_right_idle.txt" },
+            {.key = "joker_right_run", .path = "assets/hitbox/joker_right_run.txt" },
+            {.key = "joker_play_card_0", .path = "assets/hitbox/joker_play_card_0.txt" },
+            {.key = "joker_play_card_1", .path = "assets/hitbox/joker_play_card_1.txt" },
 
         };
         u32 numHitboxFiles = sizeof(hitboxFiles) / sizeof(key_path_pair);
@@ -737,7 +789,7 @@ GET_SOUND_SAMPLES_GNG_GAME(getSoundSamplesGNGGame) {
     sound_man *soundMan = &state->soundMan;
     asset_man *assetMan = &state->assetMan;
 
-    float volume = 0.5f;
+    float volume = 0.25f;
 
     // TODO: bgm
 

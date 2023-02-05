@@ -38,6 +38,7 @@ typedef enum {
     CARD_SUIT_CLUB,
     CARD_SUIT_HEART,
     CARD_SUIT_DIAMOND,
+    CARD_SUIT_JOKER,
     CARD_SUIT_COUNT
 } card_suit;
 
@@ -94,12 +95,13 @@ typedef struct cardman_attack {
     u32 linkStartFrame;
     u32 id;
     b32 spawnedBullets;
+    f32 knockbackMultiplier;
 
     f32 baseSpeed;
     f32 speedMultiplier;
 } cardman_attack;
 #define HASH_MAP_TYPE cardman_attack
-#include "hash_map.h"
+#include "../hash_map.h"
 
 typedef struct cardman_hitby_info {
     b32 wasHit;
@@ -210,7 +212,7 @@ typedef struct cardman_collision {
 #define MAX_NUM_CARDMEN 100
 
 #define CARDMAN_SPEED 150.0f
-#define DIST_TO_PLAY_CARD 300.0f
+#define DIST_TO_PLAY_CARD 200.0f
 #define DIST_TO_PLAY_CARD_TO_DECK 50.0f
 
 typedef struct scratch_mem_save{
@@ -292,9 +294,18 @@ typedef struct bullet_star {
 #define BULLET_SPEED 200.0f
 #define BULLET_LIFETIME 1.5f
 
+typedef enum {
+    AOB_PHASE_TITLE,
+    AOB_PHASE_GAMEOVER,
+    AOB_PHASE_WIN,
+    AOB_PHASE_GAMEPLAY
+} aob_phase;
 
 typedef struct aob_state {
     b32 initialized;
+    b32 gameStarted;
+
+    aob_phase phase;
 
     f32 spawnTimer;
     f32 difficultyTimer;
@@ -324,6 +335,9 @@ typedef struct aob_state {
 
     f32 newUpgradeTimer;
     powerup_type newUpgradeType;
+
+    f32 gameTime;
+    f32 jokerTimer;
 } aob_state;
 
 #endif

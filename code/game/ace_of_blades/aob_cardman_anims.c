@@ -25,6 +25,9 @@ char *getCardmanIdleAnim (cardman *cm) {
             case CARD_SUIT_HEART: { 
                 suit = "heart_";
             } break;
+            case CARD_SUIT_JOKER: { 
+                suit = "joker_";
+            } break;
         }
         ASSERT(suit != 0);
 
@@ -65,6 +68,9 @@ char *getCardmanPlayCardStartAnim (cardman *cm) {
         case CARD_SUIT_HEART: { 
             suit = "heart_";
         } break;
+        case CARD_SUIT_JOKER: { 
+            suit = "joker_";
+        } break;
     }
     ASSERT(suit != 0);
 
@@ -86,6 +92,9 @@ char *getCardmanPlayCardEndAnim (cardman *cm) {
         } break;
         case CARD_SUIT_HEART: { 
             suit = "heart_";
+        } break;
+        case CARD_SUIT_JOKER: { 
+            suit = "joker_";
         } break;
     }
     ASSERT(suit != 0);
@@ -131,6 +140,9 @@ char *getCardmanWalkingAnim (cardman *cm) {
             case CARD_SUIT_HEART: { 
                 suit = "heart_";
             } break;
+            case CARD_SUIT_JOKER: { 
+                suit = "joker_";
+            } break;
         }
         ASSERT(suit != 0);
 
@@ -170,6 +182,9 @@ char *getCardmanHitstunAnim (cardman *cm) {
         } break;
         case CARD_SUIT_HEART: { 
             suit = "heart_";
+        } break;
+        case CARD_SUIT_JOKER: { 
+            suit = "joker_";
         } break;
     }
     ASSERT(suit != 0);

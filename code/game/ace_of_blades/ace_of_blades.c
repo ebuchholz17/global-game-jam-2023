@@ -15,7 +15,7 @@ void restoreScratchMemPointer (mem_arena *scratchMemory, scratch_mem_save *scrat
 }
 
 card_suit randomSuit () {
-    return randomU32() % CARD_SUIT_COUNT;
+    return randomU32() % CARD_SUIT_JOKER;
 }
 
 card_val randomCardVal () {
@@ -176,6 +176,13 @@ deck_card makeMatchingCard (card_suit suit, card_val value) {
     return result;
 }
 
+deck_card makeJoker () {
+    return (deck_card){
+        .suit = CARD_SUIT_JOKER,
+        .value = CARD_VAL_ACE
+    };
+}
+
 deck_card makeRandomCard () {
     return (deck_card){
         .suit = randomSuit(),
@@ -232,6 +239,8 @@ void initAceOfBlades (aob_state* aobState, mem_arena *memory) {
     loadAOBHitboxData("diamond_right_hitstun", memory);
     loadAOBHitboxData("heart_left_hitstun", memory);
     loadAOBHitboxData("heart_right_hitstun", memory);
+    loadAOBHitboxData("joker_left_hitstun", memory);
+    loadAOBHitboxData("joker_right_hitstun", memory);
 
     loadAOBHitboxData("spade_play_card_0", memory);
     loadAOBHitboxData("spade_play_card_1", memory);
@@ -304,7 +313,32 @@ void initAceOfBlades (aob_state* aobState, mem_arena *memory) {
     loadAOBHitboxData("spade_right_katana_2", memory);
     loadAOBHitboxData("star", memory);
 
+    loadAOBHitboxData("joker_down_idle", memory);
+    loadAOBHitboxData("joker_down_run", memory);
+    loadAOBHitboxData("joker_left_idle", memory);
+    loadAOBHitboxData("joker_left_run", memory);
+    loadAOBHitboxData("joker_right_idle", memory);
+    loadAOBHitboxData("joker_right_run", memory);
+    loadAOBHitboxData("joker_play_card_0", memory);
+    loadAOBHitboxData("joker_play_card_1", memory);
+
     initAttacks(memory);
+
+}
+
+void startGame (mem_arena *memory) {
+    aob->gameStarted = true;
+    zeroMemory((u8 *)&aob->cardmen, sizeof(cardman) * MAX_NUM_CARDMEN);
+    zeroMemory((u8 *)&aob->decks, sizeof(deck) * NUM_DECKS);
+    zeroMemory((u8 *)&aob->bullets, sizeof(bullet_star) * MAX_NUM_BULLETS);
+    aob->spawnTimer = 0.0f;
+    aob->difficultyTimer = 0.0f;
+    aob->difficultyPoints = 0;
+    aob->playedCardInfo.active = false;
+    aob->lastHitEnemy = 0;
+    aob->guideOpen = false;
+    aob->newUpgradeTimer = 0.0f;
+    aob->jokerTimer = 0.0f;
 
     vec2 playerPos = (vec2){ .x = 240.0f, .y = 120.0f};
     deck_card playerCard = makeRandomCard();
@@ -323,6 +357,7 @@ void initAceOfBlades (aob_state* aobState, mem_arena *memory) {
 
     for (u32 i = 0; i < NUM_DECKS; i++) {
         deck *d = &aob->decks[i];
+        // oops, probably will run out of memory after a long time
         d->cards = deck_card_listInit(memory, STARTING_CARDS_PER_DECK * 2);
 
         for (u32 j = 0; j < STARTING_CARDS_PER_DECK; j++) {
@@ -509,7 +544,7 @@ void spawnCardmanBullets (cardman *cm) {
             activateBullet(cm->pos, vec2Normalize(vec2Add(dir, (vec2){ .x = 0.5f, .y = 0.0f })), 15.0f, cm->owner, damage, speed);
         }
     }
-
+    soundManPlaySound("starSFX");
 }
 
 void setCardmanAttackInfo (cardman *cm) {
@@ -534,6 +569,7 @@ void setCardmanAttackInfo (cardman *cm) {
                 break;
             }
 
+            soundManPlaySound("attack");
             cm->attack.animKey = getCardmanKatanaAnim(cm, katanaComb);
         } break;
         case CARD_SUIT_CLUB: {
@@ -550,6 +586,7 @@ void setCardmanAttackInfo (cardman *cm) {
                 break;
             }
 
+            soundManPlaySound("attack");
             cm->attack.animKey = getCardmanPunchAnim(cm, katanaComb);
         } break;
         case CARD_SUIT_DIAMOND: {
@@ -571,6 +608,7 @@ void setCardmanAttackInfo (cardman *cm) {
                 break;
             }
 
+            soundManPlaySound("attack");
             cm->attack.animKey = getCardmanSpearAnim(cm, katanaComb);
         } break;
     }
@@ -582,6 +620,10 @@ void setCardmanAttackInfo (cardman *cm) {
 }
 
 b32 cardsCanMatch (card_suit firstSuit, card_val firstValue, card_suit secondSuit, card_val secondValue) {
+    if (firstSuit == CARD_SUIT_JOKER || secondSuit == CARD_SUIT_JOKER) {
+        return true;
+    }
+
     b32 firstSuitIsBlack = firstSuit == CARD_SUIT_SPADE || firstSuit == CARD_SUIT_CLUB;
     b32 secondSuitIsBlack = secondSuit == CARD_SUIT_SPADE || secondSuit == CARD_SUIT_CLUB;
 
@@ -602,14 +644,46 @@ b32 cardsCanMatch (card_suit firstSuit, card_val firstValue, card_suit secondSui
     return suitsMatch && valsMatch;
 }
 
+void cardmenBubbleSortDistance (cardman_ptr_list *cardmen) {
+    cardman *player = aob->playerCardman;
+    for (int i = 0; i < cardmen->numValues; ++i) {
+        for (int j = i; j > 0; --j) {
+            cardman *first = cardmen->values[j-1];
+            cardman *second = cardmen->values[j];
+
+            vec2 firstToPlayer = vec2Subtract(player->pos, first->pos);
+            f32 firstDistToPlayer = vec2Length(firstToPlayer);
+            vec2 secondToPlayer = vec2Subtract(player->pos, second->pos);
+            f32 secondDistToPlayer = vec2Length(secondToPlayer);
+
+            if (secondDistToPlayer < firstDistToPlayer) {
+                cardmen->values[j-1] = second;
+                cardmen->values[j] = first;
+            }
+        }
+    }
+}
+
 void tryPlayCard (cardman *cm, mem_arena *scratchMemory) {
-    b32 playedCardFromEnemy = false;
+
+    saveScratchMemPointer(scratchMemory, &aob->scratchMemSave);
+
+    cardman_ptr_list cardmen = cardman_ptr_listInit(scratchMemory, MAX_NUM_CARDMEN);
     for (u32 cardmanIndex = 0; cardmanIndex < MAX_NUM_CARDMEN; cardmanIndex++) {
+        // TODO: draw player characters on top?
         cardman *enemy = &aob->cardmen[cardmanIndex];
 
-        if (!enemy->active || enemy == cm || enemy->defeatedTimer <= 0.0f) {
-            continue;
+        if (enemy->active && enemy != cm && enemy->defeatedTimer > 0.0f) {
+            cardman_ptr_listPush(&cardmen, enemy);
         }
+    }
+
+    cardmenBubbleSortDistance(&cardmen);
+
+    b32 playedCardFromEnemy = false;
+    for (u32 cardmanIndex = 0; cardmanIndex < cardmen.numValues; cardmanIndex++) {
+        cardman *enemy = cardmen.values[cardmanIndex];
+
         if (cardsCanMatch(cm->suit, cm->value, enemy->suit, enemy->value)) {
             vec2 playerToEnemy = vec2Subtract(cm->pos, enemy->pos);
             f32 distToEnemy = vec2Length(playerToEnemy);
@@ -627,12 +701,15 @@ void tryPlayCard (cardman *cm, mem_arena *scratchMemory) {
                     .t = 0.0f,
                 };
 
+                soundManPlaySound("card_flip");
                 playedCardFromEnemy = true;
                 enemy->active = false;
+
                 break;
             }
         }
     }
+    restoreScratchMemPointer(scratchMemory, &aob->scratchMemSave);
 
     if (!playedCardFromEnemy) {
         for (u32 deckIndex = 0; deckIndex < NUM_DECKS; deckIndex++) {
@@ -661,6 +738,7 @@ void tryPlayCard (cardman *cm, mem_arena *scratchMemory) {
                         .t = 0.0f,
                     };
 
+                    soundManPlaySound("card_flip");
                     deck_card_listSplice(&d->cards, d->cards.numValues - 1);
                     break;
 
@@ -791,6 +869,36 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
 {
     aob_input aobInput = parseGameInput(input, vInput);
 
+    if (aob->phase == AOB_PHASE_TITLE) {
+        if (aobInput.up.justPressed || aobInput.down.justPressed || aobInput.left.justPressed || aobInput.right.justPressed ||
+            aobInput.attack.justPressed || aobInput.dash.justPressed || aobInput.playCard.justPressed || aobInput.pause.justPressed)
+        {
+            aob->gameStarted = false;
+            aob->phase = AOB_PHASE_GAMEPLAY;
+        }
+        return;
+    }
+    else if (aob->phase == AOB_PHASE_GAMEOVER) {
+        if (aobInput.up.justPressed || aobInput.down.justPressed || aobInput.left.justPressed || aobInput.right.justPressed ||
+            aobInput.attack.justPressed || aobInput.dash.justPressed || aobInput.playCard.justPressed || aobInput.pause.justPressed)
+        {
+            aob->phase = AOB_PHASE_TITLE;
+        }
+        return;
+    }
+    else if (aob->phase == AOB_PHASE_WIN) {
+        if (aobInput.up.justPressed || aobInput.down.justPressed || aobInput.left.justPressed || aobInput.right.justPressed ||
+            aobInput.attack.justPressed || aobInput.dash.justPressed || aobInput.playCard.justPressed || aobInput.pause.justPressed)
+        {
+            aob->phase = AOB_PHASE_TITLE;
+        }
+        return;
+    }
+
+    if (!aob->gameStarted) {
+        startGame(memory);
+    }
+
     if (aobInput.pause.justPressed) {
         aob->guideOpen = !aob->guideOpen;
     }
@@ -798,13 +906,33 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
     if (aob->guideOpen) {
         return;
     }
+    aob->gameTime += dt;
+
+
+    b32 allEmpty = true;
+    for (u32 deckIndex = 0; deckIndex < NUM_DECKS; ++deckIndex) {
+        deck *d = &aob->decks[deckIndex];
+        if (d->cards.numValues > 0) {
+            allEmpty = false;
+            break;
+        }
+    }
+    if (allEmpty && aob->playerCardman->state == CARDMAN_STATE_IDLE) {
+        aob->phase = AOB_PHASE_WIN;
+        return;
+    }
 
     aob->spawnTimer += dt;
-    while (aob->spawnTimer > 5.0f) {
-        aob->spawnTimer -= 5.0f;
-        f32 matchingChance = 1.0f / 3.0f;
+    while (aob->spawnTimer > 3.8f) {
+        aob->spawnTimer -= 3.8f;
+        f32 matchingChance = 1.0f / 3.25f;
+        f32 jokerChance = 1.0f/40.0f;
         deck_card card;
-        if (randomF32() < matchingChance) {
+        f32 roll = randomF32();
+        if (roll < jokerChance) {
+            card = makeJoker();
+        }
+        else if (roll < matchingChance) {
             card = makeMatchingCard(aob->playerCardman->suit, aob->playerCardman->value);
         }
         else {
@@ -820,9 +948,21 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
     }
 
     aob->difficultyTimer += dt;
-    while (aob->difficultyTimer > 60.0f) {
-        aob->difficultyTimer -= 60.0f;
+    while (aob->difficultyTimer > 50.0f) {
+        aob->difficultyTimer -= 50.0f;
         aob->difficultyPoints++;
+    }
+
+    if (aob->jokerTimer > 0.0f) {
+        aob->jokerTimer -= dt;
+        if (aob->jokerTimer < 0.0f) {
+            player_upgrade pu = aob->upgrades.values[aob->upgrades.numValues - 1];
+            player_upgrade_listSplice(&aob->upgrades, aob->upgrades.numValues - 1);
+
+            aob->playerCardman->suit = pu.suit;
+            aob->playerCardman->value = pu.value;
+            //setAnimState(aob->playerCardman, get(cm));
+        }
     }
 
     // update controls/movement
@@ -876,34 +1016,37 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         setAnimState(cm, getCardmanWalkingAnim(cm));
                     }
 
-                    if (aobInput.attack.justPressed) {
-                        cm->state = CARDMAN_STATE_ATTACKING;
-                        setCardmanAttackInfo(cm);
-                        setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
+                    if (cm->suit != CARD_SUIT_JOKER) {
+                        if (aobInput.attack.justPressed) {
+                            cm->state = CARDMAN_STATE_ATTACKING;
+                            setCardmanAttackInfo(cm);
+                            setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
+                        }
+                        if (aobInput.dash.justPressed && cm->backstepLevel > 0) {
+                            vec2 moveDir = {0};
+                            if (cm->facing == DIRECTION_UP) {
+                                moveDir.y = -1.0f;
+                            }
+                            if (cm->facing == DIRECTION_DOWN) {
+                                moveDir.y = 1.0f;
+                            }
+                            if (cm->facing == DIRECTION_LEFT) {
+                                moveDir.x = -1.0f;
+                            }
+                            if (cm->facing == DIRECTION_RIGHT) {
+                                moveDir.x = 1.0f;
+                            }
+
+                            soundManPlaySound("dash");
+                            cm->state = CARDMAN_STATE_DASHING;
+                            cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
+                            cm->dodgedAttackDuringThisDodge = false;
+                            cm->dashTimer = 0.3f;
+                            setAnimState(cm, getCardmanBackstepAnim(cm));
+                        }
                     }
                     if (aobInput.playCard.justPressed) {
                         tryPlayCard(cm, scratchMemory);
-                    }
-                    if (aobInput.dash.justPressed && cm->backstepLevel > 0) {
-                        vec2 moveDir = {0};
-                        if (cm->facing == DIRECTION_UP) {
-                            moveDir.y = -1.0f;
-                        }
-                        if (cm->facing == DIRECTION_DOWN) {
-                            moveDir.y = 1.0f;
-                        }
-                        if (cm->facing == DIRECTION_LEFT) {
-                            moveDir.x = -1.0f;
-                        }
-                        if (cm->facing == DIRECTION_RIGHT) {
-                            moveDir.x = 1.0f;
-                        }
-
-                        cm->state = CARDMAN_STATE_DASHING;
-                        cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
-                        cm->dodgedAttackDuringThisDodge = false;
-                        cm->dashTimer = 0.3f;
-                        setAnimState(cm, getCardmanBackstepAnim(cm));
                     }
                 } break;
                 case CARDMAN_STATE_WALKING: {
@@ -936,20 +1079,25 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         cm->facing = getCardmanFacingForMoveDir(cm, moveDir);
                         setAnimStateWithSpeed(cm, getCardmanWalkingAnim(cm), getMoveSpeedForLevel(cm->speedLevel) / 150.0f);
 
-                        if (aobInput.dash.justPressed && cm->dashLevel > 0) {
-                            cm->state = CARDMAN_STATE_DASHING;
-                            cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
-                            cm->dodgedAttackDuringThisDodge = false;
-                            cm->dashTimer = 0.3f;
-                            setAnimState(cm, getCardmanDashingAnim(cm));
+                        if (cm->suit != CARD_SUIT_JOKER) {
+                            if (aobInput.dash.justPressed && cm->dashLevel > 0) {
+                                soundManPlaySound("dash");
+                                cm->state = CARDMAN_STATE_DASHING;
+                                cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
+                                cm->dodgedAttackDuringThisDodge = false;
+                                cm->dashTimer = 0.3f;
+                                setAnimState(cm, getCardmanDashingAnim(cm));
+                            }
                         }
                     }
 
-                    if (aobInput.attack.justPressed) {
-                        cm->state = CARDMAN_STATE_ATTACKING;
-                        setCardmanAttackInfo(cm);
-                        setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
-                        startAnimState(&cm->animState);
+                    if (cm->suit != CARD_SUIT_JOKER) {
+                        if (aobInput.attack.justPressed) {
+                            cm->state = CARDMAN_STATE_ATTACKING;
+                            setCardmanAttackInfo(cm);
+                            setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
+                            startAnimState(&cm->animState);
+                        }
                     }
                     if (aobInput.playCard.justPressed) {
                         tryPlayCard(cm, scratchMemory);
@@ -1018,6 +1166,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     moveDir.x = 1.0f;
                                 }
 
+                                soundManPlaySound("dash");
                                 cm->state = CARDMAN_STATE_DASHING;
                                 cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
                                 cm->dodgedAttackDuringThisDodge = false;
@@ -1039,6 +1188,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     moveDir.x = 1.0f;
                                 }
 
+                                soundManPlaySound("dash");
                                 cm->state = CARDMAN_STATE_DASHING;
                                 cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
                                 cm->dodgedAttackDuringThisDodge = false;
@@ -1102,7 +1252,28 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         cm->facing = getCPUCardmanFacingForMoveDir(cm, moveDir);
 
                         f32 distToPlayer = vec2Length(cmToPlayer);
-                        if (cm->suit == CARD_SUIT_DIAMOND) {
+                        if (cm->suit == CARD_SUIT_JOKER) {
+                            if (distToPlayer < 100.0f) {
+                                cm->cpu.currentAction = CPU_ACTION_WALK_AWAY_FROM_PLAYER;
+                                cm->cpu.timer = 1.0f + 1.0f * randomF32();
+                            }
+                            else {
+                                f32 randomRoll = randomF32();
+                                if (randomRoll < 0.8f) {
+                                    cm->cpu.currentAction = CPU_ACTION_WALK_TOWARDS_PLAYER;
+                                    cm->cpu.timer = 0.25f + 0.25f * randomF32();
+                                    break;
+                                }
+                                else {
+                                    cm->cpu.currentAction = CPU_ACTION_WAIT;
+                                    cm->cpu.timer = 0.3f + 0.2f * randomF32();
+                                    cm->state = CARDMAN_STATE_IDLE;
+                                    setAnimState(cm, getCardmanIdleAnim(cm));
+                                    break;
+                                }
+                            }
+                        }
+                        else if (cm->suit == CARD_SUIT_DIAMOND) {
                             if (distToPlayer > attackRange) {
                                 while (true) {
                                     f32 randomRoll = randomF32();
@@ -1120,6 +1291,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     }
                                     else {
                                         if (cm->dashLevel > 0) {
+                                            soundManPlaySound("dash");
                                             cm->state = CARDMAN_STATE_DASHING;
                                             cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
                                             cm->dodgedAttackDuringThisDodge = false;
@@ -1146,6 +1318,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                 }
                                 else {
                                     if (cm->dashLevel > 0) {
+                                        soundManPlaySound("dash");
                                         cm->state = CARDMAN_STATE_DASHING;
                                         cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), vec2Negate(moveDir));
                                         cm->dodgedAttackDuringThisDodge = false;
@@ -1206,6 +1379,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     }
                                     else {
                                         if (cm->dashLevel > 0) {
+                                            soundManPlaySound("dash");
                                             cm->state = CARDMAN_STATE_DASHING;
                                             cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
                                             cm->dodgedAttackDuringThisDodge = false;
@@ -1233,6 +1407,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     }
                                     else if (randomRoll < 0.6f) {
                                         if (cm->backstepLevel > 0) {
+                                            soundManPlaySound("dash");
                                             cm->state = CARDMAN_STATE_DASHING;
                                             cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
                                             cm->dodgedAttackDuringThisDodge = false;
@@ -1243,6 +1418,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     }
                                     else if (randomRoll < 0.7f) {
                                         if (cm->dashLevel > 0) {
+                                            soundManPlaySound("dash");
                                             cm->state = CARDMAN_STATE_DASHING;
                                             cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
                                             cm->dodgedAttackDuringThisDodge = false;
@@ -1272,6 +1448,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     }
                                     else if (randomRoll < 0.5f) {
                                         if (cm->backstepLevel > 0) {
+                                            soundManPlaySound("dash");
                                             cm->state = CARDMAN_STATE_DASHING;
                                             cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
                                             cm->dodgedAttackDuringThisDodge = false;
@@ -1303,7 +1480,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
 
                         setAnimStateWithSpeed(cm, getCardmanWalkingAnim(cm), enemySpeed / 150.0f);
 
-                        if (vec2Length(cmToPlayer) < 60.0f && randomF32() < 0.1f) {
+                        if (cm->suit != CARD_SUIT_JOKER && vec2Length(cmToPlayer) < 60.0f && randomF32() < 0.1f) {
                             cm->state = CARDMAN_STATE_ATTACKING;
                             setCardmanAttackInfo(cm);
                             setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
@@ -1361,6 +1538,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     moveDir.x = 1.0f;
                                 }
 
+                                soundManPlaySound("dash");
                                 cm->state = CARDMAN_STATE_DASHING;
                                 cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
                                 cm->dodgedAttackDuringThisDodge = false;
@@ -1384,6 +1562,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                                     moveDir.x = 1.0f;
                                 }
 
+                                soundManPlaySound("dash");
                                 cm->state = CARDMAN_STATE_DASHING;
                                 cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
                                 cm->dodgedAttackDuringThisDodge = false;
@@ -1458,6 +1637,9 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                 cm->fadingTimer -= dt;
                 if (cm->fadingTimer <= 0.0f) {
                     cm->active = false;
+                    if (cm == aob->playerCardman) {
+                        aob->phase = AOB_PHASE_GAMEOVER;
+                    }
                 }
             } break;
         }
@@ -1473,7 +1655,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
         for (u32 cardmanIndex = 0; cardmanIndex < MAX_NUM_CARDMEN; cardmanIndex++) {
             cardman *enemy = &aob->cardmen[cardmanIndex];
 
-            if (!enemy->active || enemy == player || enemy->iframesTimer > 0.0f) {
+            if (!enemy->active || enemy == player || enemy->iframesTimer > 0.0f || enemy->defeatedTimer > 0.0f || enemy->fadingTimer > 0.0f) {
                 continue;
             }
 
@@ -1494,7 +1676,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         .attackID = player->attack.id,
                         .attackOrigin = player->pos,
                         .damage = player->attack.damage * player->attack.damageMultiplier,
-                        .knockbackSpeed = getKnockbackForLevel(player->knockbackLevel)
+                        .knockbackSpeed = player->attack.knockbackMultiplier * getKnockbackForLevel(player->knockbackLevel)
                     };
                     aob->lastHitEnemy = enemy;
                 }
@@ -1502,7 +1684,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
         }
     }
 
-    if (player->iframesTimer <= 0.0f) {
+    if (player->iframesTimer <= 0.0f && player->suit != CARD_SUIT_JOKER && player->defeatedTimer <= 0.0f && player->fadingTimer <= 0.0f) {
         for (u32 cardmanIndex = 0; cardmanIndex < MAX_NUM_CARDMEN; cardmanIndex++) {
             cardman *enemy = &aob->cardmen[cardmanIndex];
 
@@ -1533,7 +1715,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                             .attackID = enemy->attack.id,
                             .attackOrigin = enemy->pos,
                             .damage = enemy->attack.damage * enemy->attack.damageMultiplier,
-                            .knockbackSpeed = getKnockbackForLevel(enemy->knockbackLevel)
+                            .knockbackSpeed = enemy->attack.knockbackMultiplier * getKnockbackForLevel(enemy->knockbackLevel)
                         };
                     }
                 }
@@ -1594,7 +1776,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                 }
             }
             else {
-                if (player->iframesTimer <= 0.0f && player->lastAttackHitByID != bullet->attackID) {
+                if (player->iframesTimer <= 0.0f && player->suit != CARD_SUIT_JOKER && player->lastAttackHitByID != bullet->attackID) {
                     b32 hit = testCardmanAttackHitCardman(player, bulletCurrentFrame, &bulletTransform);
 
                     if (hit) {
@@ -1662,6 +1844,27 @@ cmCollisionCheckDone:
         vec2 separationDir = vec2Normalize(distBetweenCM);
         first->pos = vec2Add(vec2ScalarMul(-10.0f * dt, separationDir), first->pos);
         second->pos = vec2Add(vec2ScalarMul(10.0f * dt, separationDir), second->pos);
+
+        if (first->owner == CARDMAN_OWNER_PLAYER && aob->jokerTimer > 0.0f) {
+            second->hitByInfo = (cardman_hitby_info){
+                .wasHit = true,
+                .attackID = 0,
+                .attackOrigin = first->pos,
+                .damage = 3.0f,
+                .knockbackSpeed = getKnockbackForLevel(first->knockbackLevel)
+            };
+            aob->lastHitEnemy = second;
+        }
+        else if (second->owner == CARDMAN_OWNER_PLAYER && aob->jokerTimer > 0.0f) {
+            first->hitByInfo = (cardman_hitby_info){
+                .wasHit = true,
+                .attackID = 0,
+                .attackOrigin = second->pos,
+                .damage = 3.0f,
+                .knockbackSpeed = getKnockbackForLevel(second->knockbackLevel)
+            };
+            aob->lastHitEnemy = first;
+        }
     }
     restoreScratchMemPointer(scratchMemory, &aob->scratchMemSave);
 
@@ -1673,6 +1876,7 @@ cmCollisionCheckDone:
         }
 
         if (cm->hitByInfo.wasHit) {
+            soundManPlaySound("impact");
             cm->lastAttackHitByID = cm->hitByInfo.attackID;
             cm->state = CARDMAN_STATE_HITSTUN;
             setAnimState(cm, getCardmanHitstunAnim(cm));
@@ -1780,42 +1984,52 @@ cmCollisionCheckDone:
                         .suit = player->suit,
                         .value = player->value,
                     });
+                    aob->jokerTimer = 0.0f;
+                    soundManPlaySound("level_up");
 
-                    powerup_type pu = getUpgradeTypeForSuitValue(pcInfo->suit, pcInfo->value);
-                    switch (pu) {
-                        case POWERUP_TYPE_SPEED: {
-                            player->speedLevel++;
-                        } break;
-                        case POWERUP_TYPE_HITPOINTS: {
-                            player->hitpointLevel++;
-                        } break;
-                        case POWERUP_TYPE_DASH: {
-                            player->dashLevel++;
-                        } break;
-                        case POWERUP_TYPE_BACKSTEP: {
-                            player->backstepLevel++;
-                        } break;
-                        case POWERUP_TYPE_ATTACK_DAMAGE: {
-                            player->attackDamageLevel++;
-                        } break;
-                        case POWERUP_TYPE_ATTACK_SPEED: {
-                            player->attackSpeedLevel++;
-                        } break;
-                        case POWERUP_TYPE_ATTACK_COMBO: {
-                            player->attackComboLevel++;
-                        } break;
-                        case POWERUP_TYPE_KNOCKBACK: {
-                            player->knockbackLevel++;
-                        } break;
-                        case POWERUP_TYPE_INCREASE_ENEMY_HITSTUN: {
-                            player->enemyHitstunLevel++;
-                        } break;
-                        case POWERUP_TYPE_DECREASE_PLAYER_HITSTUN: {
-                            player->playerHitstunLevel++;
-                        } break;
-                        case POWERUP_TYPE_INVINCIBILITY_FRAMES: {
-                            player->invincibilityFramesLevel++;
-                        } break;
+                    if (pcInfo->suit != CARD_SUIT_JOKER) {
+                        powerup_type pu = getUpgradeTypeForSuitValue(pcInfo->suit, pcInfo->value);
+                        switch (pu) {
+                            case POWERUP_TYPE_SPEED: {
+                                player->speedLevel++;
+                            } break;
+                            case POWERUP_TYPE_HITPOINTS: {
+                                player->hitpointLevel++;
+                            } break;
+                            case POWERUP_TYPE_DASH: {
+                                player->dashLevel++;
+                            } break;
+                            case POWERUP_TYPE_BACKSTEP: {
+                                player->backstepLevel++;
+                            } break;
+                            case POWERUP_TYPE_ATTACK_DAMAGE: {
+                                player->attackDamageLevel++;
+                            } break;
+                            case POWERUP_TYPE_ATTACK_SPEED: {
+                                player->attackSpeedLevel++;
+                            } break;
+                            case POWERUP_TYPE_ATTACK_COMBO: {
+                                player->attackComboLevel++;
+                            } break;
+                            case POWERUP_TYPE_KNOCKBACK: {
+                                player->knockbackLevel++;
+                            } break;
+                            case POWERUP_TYPE_INCREASE_ENEMY_HITSTUN: {
+                                player->enemyHitstunLevel++;
+                            } break;
+                            case POWERUP_TYPE_DECREASE_PLAYER_HITSTUN: {
+                                player->playerHitstunLevel++;
+                            } break;
+                            case POWERUP_TYPE_INVINCIBILITY_FRAMES: {
+                                player->invincibilityFramesLevel++;
+                            } break;
+                        }
+
+                        aob->newUpgradeTimer = 1.0f;
+                        aob->newUpgradeType = pu;
+                    }
+                    else {
+                        aob->jokerTimer = 10.0f;
                     }
                     player->maxHitpoints = getHitpointsForLevel(player->hitpointLevel);
 
@@ -1824,8 +2038,6 @@ cmCollisionCheckDone:
                     player->hitPoints = player->maxHitpoints;
                     pcInfo->phase = PLAYED_CARD_PHASE_MOVE_PLAYER_PAUSE;
 
-                    aob->newUpgradeTimer = 1.0f;
-                    aob->newUpgradeType = pu;
 
                     setAnimState(player, getCardmanPlayCardEndAnim(player));
                 }
@@ -1981,6 +2193,43 @@ void cardmenBubbleSort (cardman_ptr_list *cardmen) {
 }
 
 void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory) {
+    if (aob->phase == AOB_PHASE_TITLE) {
+        spriteManAddText((sprite_text){
+            .x = 270.0f,
+            .y = 160.0f,
+            .text = "ace of blades",
+            .fontKey = "font"
+        });
+
+        spriteManAddText((sprite_text){
+            .x = 240.0f,
+            .y = 190.0f,
+            .text = "press any button to continue",
+            .fontKey = "font"
+        });
+        return;
+    }
+
+    if (aob->phase == AOB_PHASE_GAMEOVER) {
+        spriteManAddText((sprite_text){
+            .x = 240.0f,
+            .y = 160.0f,
+            .text = "game over",
+            .fontKey = "font"
+        });
+        return;
+    }
+
+    if (aob->phase == AOB_PHASE_WIN) {
+        spriteManAddText((sprite_text){
+            .x = 240.0f,
+            .y = 160.0f,
+            .text = "congratulations, you win!",
+            .fontKey = "font"
+        });
+        return;
+    }
+
     vec2 cameraOffset = (vec2){ .x = 320.0f, .y = 220.0f };
     spriteManPushTransform((sprite_transform){
         .pos = vec2Subtract(cameraOffset, aob->playerCardman->pos),
@@ -2068,8 +2317,8 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
 
             if (cardsCanMatch(aob->playerCardman->suit, aob->playerCardman->value, topCard.suit, topCard.value)) {
                 sprite buttonPromptSprite = defaultSprite();
-                buttonPromptSprite.pos.x = d->pos.x + 12.0f;
-                buttonPromptSprite.pos.y = d->pos.y - 35.0f;
+                buttonPromptSprite.pos.x = d->pos.x + 16.0f;
+                buttonPromptSprite.pos.y = d->pos.y - 30.0f;
                 buttonPromptSprite.anchor = (vec2){ .x = 0.5f, .y = 0.5f };
                 buttonPromptSprite.atlasKey = "atlas";
                 buttonPromptSprite.frameKey = aob->inputSource == INPUT_SOURCE_KEYBOARD ? "a_key_prompt" : "right_button_prompt";
@@ -2096,12 +2345,14 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
                         cardSprite.anchor = (vec2){ .x = 0.5f, .y = 1.0f };
                         spriteManAddSprite(cardSprite);
 
-                        sprite valSprite = defaultSprite();
-                        valSprite.pos.x = pcInfo->cardPos.x - 12.0f;
-                        valSprite.pos.y = pcInfo->cardPos.y - 41.0f;
-                        valSprite.atlasKey = "atlas";
-                        valSprite.frameKey = suitAndValueToFrame(pcInfo->suit, pcInfo->value);
-                        spriteManAddSprite(valSprite);
+                        if (pcInfo->suit != CARD_SUIT_JOKER) {
+                            sprite valSprite = defaultSprite();
+                            valSprite.pos.x = pcInfo->cardPos.x - 12.0f;
+                            valSprite.pos.y = pcInfo->cardPos.y - 41.0f;
+                            valSprite.atlasKey = "atlas";
+                            valSprite.frameKey = suitAndValueToFrame(pcInfo->suit, pcInfo->value);
+                            spriteManAddSprite(valSprite);
+                        }
                     } break;
                     case PLAYED_CARD_PHASE_CARD_PAUSE: {
                         sprite cardSprite = defaultSprite();
@@ -2118,12 +2369,14 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
                         }
                         spriteManAddSprite(cardSprite);
 
-                        sprite valSprite = defaultSprite();
-                        valSprite.pos.x = pcInfo->cardPos.x - 12.0f;
-                        valSprite.pos.y = pcInfo->cardPos.y - 41.0f;
-                        valSprite.atlasKey = "atlas";
-                        valSprite.frameKey = suitAndValueToFrame(pcInfo->suit, pcInfo->value);
-                        spriteManAddSprite(valSprite);
+                        if (pcInfo->suit != CARD_SUIT_JOKER) {
+                            sprite valSprite = defaultSprite();
+                            valSprite.pos.x = pcInfo->cardPos.x - 12.0f;
+                            valSprite.pos.y = pcInfo->cardPos.y - 41.0f;
+                            valSprite.atlasKey = "atlas";
+                            valSprite.frameKey = suitAndValueToFrame(pcInfo->suit, pcInfo->value);
+                            spriteManAddSprite(valSprite);
+                        }
                     } break;
                 }
 
@@ -2137,12 +2390,14 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
                 cardSprite.frameKey = getCardSuitFrame(topCard.suit);
                 spriteManAddSprite(cardSprite);
 
-                sprite valSprite = defaultSprite();
-                valSprite.pos.x = pos.x + 3.0f;
-                valSprite.pos.y = pos.y + 3.0f;
-                valSprite.atlasKey = "atlas";
-                valSprite.frameKey = suitAndValueToFrame(topCard.suit, topCard.value);
-                spriteManAddSprite(valSprite);
+                if (topCard.suit != CARD_SUIT_JOKER) {
+                    sprite valSprite = defaultSprite();
+                    valSprite.pos.x = pos.x + 3.0f;
+                    valSprite.pos.y = pos.y + 3.0f;
+                    valSprite.atlasKey = "atlas";
+                    valSprite.frameKey = suitAndValueToFrame(topCard.suit, topCard.value);
+                    spriteManAddSprite(valSprite);
+                }
             }
         }
     }
@@ -2181,6 +2436,12 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
         cmSprite.anchor = (vec2){ .x = 0.0f, .y = 1.0f };
         if (cm->iframesTimer > 0.0f) {
             cmSprite.tint = 0xff0000;
+        }
+        if (cm->suit == CARD_SUIT_JOKER && cm->owner == CARDMAN_OWNER_PLAYER) {
+            f32 blinkVal = sin2PI(aob->gameTime * 6.0f);
+            if (blinkVal >= 0.0f) {
+                cmSprite.tint = 0xff88ff;
+            }
         }
         if (cm->defeatedTimer > 0.0f) {
             f32 defeatBlinkVal = sin2PI(cm->defeatedTimer * 6.0f);
@@ -2221,27 +2482,30 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
                 sprite shadow = cmSprite;
                 vec2 pos = cm->lastPositions[lastPosIndex];
                 pos = vec2Add(pos, (vec2){ .x = currentFrame->xOffset, .y = currentFrame->yOffset });
-                cmSprite.pos = pos;
-                cmSprite.tint = 0x000000;
-                cmSprite.alpha = 0.5f;
+                shadow.pos = pos;
+                shadow.tint = 0x000000;
+                shadow.alpha = 0.5f;
                 spriteManAddSprite(shadow);
             }
         }
 
         spriteManAddSprite(cmSprite);
 
-        if (cm->hitstunTimer > 0.0f || 
-            cm->defeatedTimer > 0.0f || 
-            cm->fadingTimer > 0.0f || 
-            cm->facing != DIRECTION_UP) 
-        {
-            sprite valSprite = defaultSprite();
-            valSprite.pos.x = cm->pos.x - 12.0f;
-            valSprite.pos.y = cm->pos.y - 55.0f;
-            valSprite.atlasKey = "atlas";
-            valSprite.frameKey = suitAndValueToFrame(cm->suit, cm->value);
-            spriteManAddSprite(valSprite);
+        if (cm->suit != CARD_SUIT_JOKER) {
+            if (cm->hitstunTimer > 0.0f || 
+                cm->defeatedTimer > 0.0f || 
+                cm->fadingTimer > 0.0f || 
+                cm->facing != DIRECTION_UP) 
+            {
+                sprite valSprite = defaultSprite();
+                valSprite.pos.x = cm->pos.x - 12.0f;
+                valSprite.pos.y = cm->pos.y - 55.0f;
+                valSprite.atlasKey = "atlas";
+                valSprite.frameKey = suitAndValueToFrame(cm->suit, cm->value);
+                spriteManAddSprite(valSprite);
+            }
         }
+
         //drawHitBoxes(currentFrame, cm->pos);
     }
 
@@ -2275,12 +2539,14 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
         cardSprite.anchor = (vec2){ .x = 0.5f, .y = 1.0f };
         spriteManAddSprite(cardSprite);
 
-        sprite valSprite = defaultSprite();
-        valSprite.pos.x = aob->playedCardInfo.cardPos.x - 12.0f;
-        valSprite.pos.y = aob->playedCardInfo.cardPos.y - 55.0f;
-        valSprite.atlasKey = "atlas";
-        valSprite.frameKey = suitAndValueToFrame(aob->playedCardInfo.suit, aob->playedCardInfo.value);
-        spriteManAddSprite(valSprite);
+        if (aob->playedCardInfo.suit != CARD_SUIT_JOKER) {
+            sprite valSprite = defaultSprite();
+            valSprite.pos.x = aob->playedCardInfo.cardPos.x - 12.0f;
+            valSprite.pos.y = aob->playedCardInfo.cardPos.y - 55.0f;
+            valSprite.atlasKey = "atlas";
+            valSprite.frameKey = suitAndValueToFrame(aob->playedCardInfo.suit, aob->playedCardInfo.value);
+            spriteManAddSprite(valSprite);
+        }
     }
 
     spriteManPopMatrix();
@@ -2293,26 +2559,26 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
     spriteManAddSprite(topBannerSprite);
 
     spriteManAddText((sprite_text){
-        .x = 94.0f,
-        .y = 8.0f,
+        .x = 96.0f,
+        .y = 11.0f,
         .text = "player",
         .fontKey = "font"
     });
 
     spriteManAddText((sprite_text){
-        .x = 512.0f,
-        .y = 8.0f,
+        .x = 510.0f,
+        .y = 11.0f,
         .text = "enemy",
         .fontKey = "font"
     });
 
-    mat3x3 posMatrix = mat3x3Translate(154.0f, 3.0f);
+    mat3x3 posMatrix = mat3x3Translate(147.0f, 3.0f);
     spriteManPushMatrix(posMatrix);
 
     // TODO: maxHealth prop
     f32 healthPercent = aob->playerCardman->hitPoints / aob->playerCardman->maxHitpoints;
     if (healthPercent < 0.0f) { healthPercent = 0.0f; }
-    f32 healthWidth = (1.0f / 22.0f) * healthPercent * 150.0f;
+    f32 healthWidth = (1.0f / 22.0f) * healthPercent * 135.0f;
 
     mat3x3 scaleTransform = mat3x3ScaleXY(healthWidth, 1.0f);
     spriteManPushMatrix(scaleTransform);
@@ -2326,12 +2592,12 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
     spriteManPopMatrix();
 
     if (aob->lastHitEnemy != 0) {
-        mat3x3 posMatrix = mat3x3Translate(502.0f, 3.0f);
+        mat3x3 posMatrix = mat3x3Translate(503.0f, 3.0f);
         spriteManPushMatrix(posMatrix);
 
         f32 healthPercent = aob->lastHitEnemy->hitPoints / aob->lastHitEnemy->maxHitpoints;
         if (healthPercent < 0.0f) { healthPercent = 0.0f; }
-        f32 healthWidth = (1.0f / 22.0f) * healthPercent * 150.0f;
+        f32 healthWidth = (1.0f / 22.0f) * healthPercent * 135.0f;
 
         mat3x3 scaleTransform = mat3x3ScaleXY(-healthWidth, 1.0f);
         spriteManPushMatrix(scaleTransform);
@@ -2344,6 +2610,29 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
         spriteManPopMatrix();
         spriteManPopMatrix();
     }
+
+    u32 time = (u32)aob->gameTime;
+    u32 seconds = time % 60;
+    u32 minutes = time / 60;
+    u32 hours = time / 3600;
+    char *timeString = tempStringFromI32((i32)hours);
+    timeString = tempStringAppend(timeString, ":");
+    if (minutes < 10) {
+        timeString = tempStringAppend(timeString, "0");
+    }
+    timeString = tempStringAppend(timeString, tempStringFromI32((i32)minutes));
+    timeString = tempStringAppend(timeString, ":");
+    if (seconds < 10) {
+        timeString = tempStringAppend(timeString, "0");
+    }
+    timeString = tempStringAppend(timeString, tempStringFromI32((i32)seconds));
+
+    spriteManAddText((sprite_text){
+        .x = 302.0f,
+        .y = 11.0f,
+        .text = timeString,
+        .fontKey = "font"
+    });
 
     if (aob->newUpgradeTimer > 0.0f) {
         sprite upgradeBannerSprite = defaultSprite();

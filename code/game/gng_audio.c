@@ -15,6 +15,7 @@ void soundManPlaySound (char *key) {
             sound_asset *soundAsset = getSound(soundMan->assetMan, key);
             playingSound->key = soundAsset->key; // use the pointer assigned to the sound asset, which is permanent
             playingSound->currentSampleIndex = 0;
+            break;
         }
     }
 }

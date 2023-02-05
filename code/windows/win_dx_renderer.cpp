@@ -251,8 +251,8 @@ D3D12_BLEND_DESC getDefaultBlendDesc () {
     result.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
     result.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
     result.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-    result.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ZERO;
-    result.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+    result.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+    result.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
     result.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
     result.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
     result.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
@@ -823,7 +823,7 @@ void renderGame (dx_renderer *dxr, mem_arena *renderMemory) {
         cmdList->ResourceBarrier(1, &barrier);
     }
 
-    f32 clearColor[] = { 0.0f, 0.7f, 0.8f, 1.0f };
+    f32 clearColor[] = { 0.0f, 0.53f, 0.17f, 1.0f };
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = dxr->rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
     rtvHandle.ptr += dxr->currBackBufferIndex * dxr->rtvDescriptorSize;
     cmdList->ClearRenderTargetView(rtvHandle, clearColor, 0, 0);
