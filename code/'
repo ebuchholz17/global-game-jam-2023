@@ -64,6 +64,10 @@ void activateCardMan (cardman_owner owner, vec2 pos, deck_card card) {
                     //.vel
                 };
 
+                // set levels based on current difficulty
+
+                cm->hitPoints = getHitpointsForLevel(cm->hitpointLevel);
+                cm->maxHitpoints = getHitpointsForLevel(cm->hitpointLevel);
             }
             else {
                 *cm = (cardman){
@@ -81,44 +85,6 @@ void activateCardMan (cardman_owner owner, vec2 pos, deck_card card) {
                     //.vel
                 };
             }
-
-            // set levels based on current difficulty
-            i32 difficultyPoints = (i32)aob->difficultyPoints;
-            while (difficultyPoints > 0) {
-                --difficultyPoints;
-
-                u32 randomUpgrade = randomU32() % 8;
-                switch (randomUpgrade) {
-                case 0:
-                    cm->speedLevel++;
-                    break;
-                case 1:
-                    cm->hitpointLevel++;
-                    break;
-                case 2:
-                    cm->dashLevel++;
-                    break;
-                case 3:
-                    cm->backstepLevel++;
-                    break;
-                case 4:
-                    cm->attackDamageLevel++;
-                    break;
-                case 5:
-                    cm->attackSpeedLevel++;
-                    break;
-                case 6:
-                    cm->attackComboLevel++;
-                    break;
-                case 7:
-                    cm->knockbackLevel++;
-                    break;
-                }
-            }
-
-            cm->hitPoints = getCPUHitpointsForLevel(cm->hitpointLevel);
-            cm->maxHitpoints = getCPUHitpointsForLevel(cm->hitpointLevel);
-
 
             cm->animState = (animation_state){
                 .key = getCardmanIdleAnim(cm),
@@ -650,104 +616,100 @@ void tryPlayCard (cardman *cm, mem_arena *scratchMemory) {
 
                 if (distToDeck <= DIST_TO_PLAY_CARD_TO_DECK) {
                     cm->state = CARDMAN_STATE_PLAYING_CARD;
-                    setAnimState(cm, getCardmanPlayCardStartAnim(cm));
 
-                    aob->playedCardInfo = (played_card_info){
+                    d->playedCardToDeckInfo = (played_card_to_deck_info){
                         .active = true,
-                        .suit = topCard.suit,
-                        .value = topCard.value,
-                        .cardStartPos = vec2Add(d->pos, (vec2){ .x = 16.0f, .y = 39.0f}),
-                        .phase = PLAYED_CARD_PHASE_MOVE_CARD_ABOVE,
+                        .suit = cm->suit,
+                        .value = cm->value,
+                        .cardStartPos = cm->pos,
+                        .phase = PLAYED_CARD_TO_DECK_PHASE_MOVE_CARD_TO_DECK,
                         .t = 0.0f,
                     };
 
-                    deck_card_listSplice(&d->cards, d->cards.numValues - 1);
-                    break;
+                    // TODO: remove card from player
+                    if (aob->upgrades.numValues == 0) {
+                        cm->active = false;
+                    }
+                    else {
+                        player_upgrade pu = aob->upgrades.values[aob->upgrades.numValues - 1];
+                        player_upgrade_listSplice(&aob->upgrades, aob->upgrades.numValues - 1);
 
-                    //// TODO: remove card from player
-                    //if (aob->upgrades.numValues == 0) {
-                    //    cm->active = false;
-                    //}
-                    //else {
-                    //    player_upgrade pu = aob->upgrades.values[aob->upgrades.numValues - 1];
-                    //    player_upgrade_listSplice(&aob->upgrades, aob->upgrades.numValues - 1);
+                        powerup_type powerup = getUpgradeTypeForSuitValue(cm->suit, cm->value);
+                        switch (powerup) {
+                            case POWERUP_TYPE_SPEED: {
+                                cm->speedLevel--;
+                                if (cm->speedLevel < 0) {
+                                    cm->speedLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_HITPOINTS: {
+                                cm->hitpointLevel--;
+                                if (cm->hitpointLevel < 0) {
+                                    cm->hitpointLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_DASH: {
+                                cm->dashLevel--;
+                                if (cm->dashLevel < 0) {
+                                    cm->dashLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_BACKSTEP: {
+                                cm->backstepLevel--;
+                                if (cm->backstepLevel < 0) {
+                                    cm->backstepLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_ATTACK_DAMAGE: {
+                                cm->attackDamageLevel--;
+                                if (cm->attackDamageLevel < 0) {
+                                    cm->attackDamageLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_ATTACK_SPEED: {
+                                cm->attackSpeedLevel--;
+                                if (cm->attackSpeedLevel < 0) {
+                                    cm->attackSpeedLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_ATTACK_COMBO: {
+                                cm->attackComboLevel--;
+                                if (cm->attackComboLevel < 0) {
+                                    cm->attackComboLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_KNOCKBACK: {
+                                cm->knockbackLevel--;
+                                if (cm->knockbackLevel < 0) {
+                                    cm->knockbackLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_INCREASE_ENEMY_HITSTUN: {
+                                cm->enemyHitstunLevel--;
+                                if (cm->enemyHitstunLevel < 0) {
+                                    cm->enemyHitstunLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_DECREASE_PLAYER_HITSTUN: {
+                                cm->playerHitstunLevel--;
+                                if (cm->playerHitstunLevel < 0) {
+                                    cm->playerHitstunLevel = 0;
+                                }
+                            } break;
+                            case POWERUP_TYPE_INVINCIBILITY_FRAMES: {
+                                cm->invincibilityFramesLevel--;
+                                if (cm->invincibilityFramesLevel < 0) {
+                                    cm->invincibilityFramesLevel = 0;
+                                }
+                            } break;
+                        }
+                        cm->maxHitpoints = getHitpointsForLevel(cm->hitpointLevel);
 
-                    //    powerup_type powerup = getUpgradeTypeForSuitValue(cm->suit, cm->value);
-                    //    switch (powerup) {
-                    //        case POWERUP_TYPE_SPEED: {
-                    //            cm->speedLevel--;
-                    //            if (cm->speedLevel < 0) {
-                    //                cm->speedLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_HITPOINTS: {
-                    //            cm->hitpointLevel--;
-                    //            if (cm->hitpointLevel < 0) {
-                    //                cm->hitpointLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_DASH: {
-                    //            cm->dashLevel--;
-                    //            if (cm->dashLevel < 0) {
-                    //                cm->dashLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_BACKSTEP: {
-                    //            cm->backstepLevel--;
-                    //            if (cm->backstepLevel < 0) {
-                    //                cm->backstepLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_ATTACK_DAMAGE: {
-                    //            cm->attackDamageLevel--;
-                    //            if (cm->attackDamageLevel < 0) {
-                    //                cm->attackDamageLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_ATTACK_SPEED: {
-                    //            cm->attackSpeedLevel--;
-                    //            if (cm->attackSpeedLevel < 0) {
-                    //                cm->attackSpeedLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_ATTACK_COMBO: {
-                    //            cm->attackComboLevel--;
-                    //            if (cm->attackComboLevel < 0) {
-                    //                cm->attackComboLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_KNOCKBACK: {
-                    //            cm->knockbackLevel--;
-                    //            if (cm->knockbackLevel < 0) {
-                    //                cm->knockbackLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_INCREASE_ENEMY_HITSTUN: {
-                    //            cm->enemyHitstunLevel--;
-                    //            if (cm->enemyHitstunLevel < 0) {
-                    //                cm->enemyHitstunLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_DECREASE_PLAYER_HITSTUN: {
-                    //            cm->playerHitstunLevel--;
-                    //            if (cm->playerHitstunLevel < 0) {
-                    //                cm->playerHitstunLevel = 0;
-                    //            }
-                    //        } break;
-                    //        case POWERUP_TYPE_INVINCIBILITY_FRAMES: {
-                    //            cm->invincibilityFramesLevel--;
-                    //            if (cm->invincibilityFramesLevel < 0) {
-                    //                cm->invincibilityFramesLevel = 0;
-                    //            }
-                    //        } break;
-                    //    }
-                    //    cm->maxHitpoints = getHitpointsForLevel(cm->hitpointLevel);
-
-                    //    cm->suit = pu.suit;
-                    //    cm->value = pu.value;
-                    //    cm->hitPoints = cm->maxHitpoints;
-                    //    setAnimState(cm, getCardmanPlayCardEndAnim(cm));
-                    //}
+                        cm->suit = pu.suit;
+                        cm->value = pu.value;
+                        cm->hitPoints = cm->maxHitpoints;
+                        setAnimState(cm, getCardmanPlayCardEndAnim(cm));
+                    }
 
                     break;
                 }
@@ -800,9 +762,9 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
     }
 
     aob->spawnTimer += dt;
-    while (aob->spawnTimer > 5.0f) {
-        aob->spawnTimer -= 5.0f;
-        f32 matchingChance = 1.0f / 3.0f;
+    while (aob->spawnTimer > 2.0f) {
+        aob->spawnTimer -= 2.0f;
+        f32 matchingChance = 1.0f / 4.0f;
         deck_card card;
         if (randomF32() < matchingChance) {
             card = makeMatchingCard(aob->playerCardman->suit, aob->playerCardman->value);
@@ -817,12 +779,6 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
             .y = sin2PI(t) * 500.0f + 100.0f * randomF32() 
         });
         activateCardMan(CARDMAN_OWNER_CPU, pos, card);
-    }
-
-    aob->difficultyTimer += dt;
-    while (aob->difficultyTimer > 60.0f) {
-        aob->difficultyTimer -= 60.0f;
-        aob->difficultyPoints++;
     }
 
     // update controls/movement
@@ -879,7 +835,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                     if (aobInput.attack.justPressed) {
                         cm->state = CARDMAN_STATE_ATTACKING;
                         setCardmanAttackInfo(cm);
-                        setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
+                        setAnimState(cm, cm->attack.animKey);
                     }
                     if (aobInput.playCard.justPressed) {
                         tryPlayCard(cm, scratchMemory);
@@ -900,7 +856,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         }
 
                         cm->state = CARDMAN_STATE_DASHING;
-                        cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
+                        cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->dashLevel), moveDir);
                         cm->dodgedAttackDuringThisDodge = false;
                         cm->dashTimer = 0.3f;
                         setAnimState(cm, getCardmanBackstepAnim(cm));
@@ -948,7 +904,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                     if (aobInput.attack.justPressed) {
                         cm->state = CARDMAN_STATE_ATTACKING;
                         setCardmanAttackInfo(cm);
-                        setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
+                        setAnimState(cm, cm->attack.animKey);
                         startAnimState(&cm->animState);
                     }
                     if (aobInput.playCard.justPressed) {
@@ -962,8 +918,8 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         spawnCardmanBullets(cm);
                     }
 
-                    if (cm->animState.totalFrames >= cm->attack.linkStartFrame) {
-                        if (aobInput.attack.justPressed && cm->attackComboLevel > cm->attack.comboIndex) {
+                    if (cm->animState.totalFrames >= cm->attack.linkStartFrame && cm->attackComboLevel > cm->attack.comboIndex) {
+                        if (aobInput.attack.justPressed) {
 
                             if (aobInput.up.down) {
                                 cm->facing = DIRECTION_UP;
@@ -980,7 +936,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
 
                             cm->state = CARDMAN_STATE_ATTACKING;
                             setCardmanAttackInfo(cm);
-                            setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
+                            setAnimState(cm, cm->attack.animKey);
                             startAnimState(&cm->animState);
                         }
 
@@ -1053,7 +1009,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         if (aobInput.attack.justPressed) {
                             cm->state = CARDMAN_STATE_ATTACKING;
                             setCardmanAttackInfo(cm);
-                            setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
+                            setAnimState(cm, cm->attack.animKey);
                             startAnimState(&cm->animState);
                         }
                     }
@@ -1063,266 +1019,28 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
         else {
             switch (cm->state) {
                 case CARDMAN_STATE_IDLE: {
-                    cm->vel = (vec2){0};
-                    if (cm->cpu.currentAction == CPU_ACTION_WAIT) {
-                        cm->cpu.timer -= dt;
-                        if (cm->cpu.timer <= 0.0f) {
-                            cm->state = CARDMAN_STATE_WALKING;
-                            setAnimState(cm, getCardmanWalkingAnim(cm));
-                        }
-                    }
-                    else {
-                        cm->state = CARDMAN_STATE_WALKING;
-                        setAnimState(cm, getCardmanWalkingAnim(cm));
-                    }
+                    cm->state = CARDMAN_STATE_WALKING;
+                    setAnimState(cm, getCardmanWalkingAnim(cm));
                 } break;
                 case CARDMAN_STATE_WALKING: {
                     cardman *player = aob->playerCardman;
-
                     vec2 cmToPlayer = vec2Subtract(player->pos, cm->pos);
+                    vec2 moveDir = vec2Normalize(cmToPlayer);
 
-                    if (cm->cpu.timer <= 0.0f) {
-                        f32 attackRange = 0.0f;
-                        switch (cm->suit) {
-                        case CARD_SUIT_SPADE: 
-                            attackRange = 60.0f;
-                            break;
-                        case CARD_SUIT_CLUB: 
-                            attackRange = 50.0f;
-                            break;
-                        case CARD_SUIT_HEART: 
-                            attackRange = 100.0f;
-                            break;
-                        case CARD_SUIT_DIAMOND: 
-                            attackRange = 150.0f;
-                            break;
-                        }
+                    f32 enemySpeed = 30.0f;
+                    cm->vel = vec2ScalarMul(enemySpeed, moveDir);
 
-                        vec2 moveDir = vec2Normalize(cmToPlayer);
-                        cm->facing = getCPUCardmanFacingForMoveDir(cm, moveDir);
+                    cm->facing = getCPUCardmanFacingForMoveDir(cm, moveDir);
+                    setAnimStateWithSpeed(cm, getCardmanWalkingAnim(cm), enemySpeed / 150.0f);
 
-                        f32 distToPlayer = vec2Length(cmToPlayer);
-                        if (cm->suit == CARD_SUIT_DIAMOND) {
-                            if (distToPlayer > attackRange) {
-                                while (true) {
-                                    f32 randomRoll = randomF32();
-                                    if (randomRoll < 0.7f) {
-                                        cm->cpu.currentAction = CPU_ACTION_WALK_TOWARDS_PLAYER;
-                                        cm->cpu.timer = 1.0f + 3.0f * randomF32();
-                                        break;
-                                    }
-                                    else if (randomRoll < 0.8) {
-                                        cm->cpu.currentAction = CPU_ACTION_WAIT;
-                                        cm->cpu.timer = 0.5f + 1.0f * randomF32();
-                                        cm->state = CARDMAN_STATE_IDLE;
-                                        setAnimState(cm, getCardmanIdleAnim(cm));
-                                        break;
-                                    }
-                                    else {
-                                        if (cm->dashLevel > 0) {
-                                            cm->state = CARDMAN_STATE_DASHING;
-                                            cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
-                                            cm->dodgedAttackDuringThisDodge = false;
-                                            cm->dashTimer = 0.3f;
-                                            setAnimState(cm, getCardmanDashingAnim(cm));
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (distToPlayer < 60.0f) {
-                                f32 randomRoll = randomF32();
-                                if (randomRoll < 0.7f) {
-                                    cm->cpu.currentAction = CPU_ACTION_WALK_AWAY_FROM_PLAYER;
-                                    cm->cpu.timer = 1.0f + 1.0f * randomF32();
-                                    break;
-                                }
-                                else if (randomRoll < 0.8) {
-                                    cm->cpu.currentAction = CPU_ACTION_WAIT;
-                                    cm->cpu.timer = 0.25f + 0.5f * randomF32();
-                                    cm->state = CARDMAN_STATE_IDLE;
-                                    setAnimState(cm, getCardmanIdleAnim(cm));
-                                    break;
-                                }
-                                else {
-                                    if (cm->dashLevel > 0) {
-                                        cm->state = CARDMAN_STATE_DASHING;
-                                        cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), vec2Negate(moveDir));
-                                        cm->dodgedAttackDuringThisDodge = false;
-                                        cm->dashTimer = 0.3f;
-                                        setAnimState(cm, getCardmanDashingAnim(cm));
-                                        break;
-                                    }
-                                }
-                            }
-                            else {
-                                if ((cm->pos.y > player->pos.y - 20.0f && cm->pos.y < player->pos.y + 60.0f) ||
-                                    (cm->pos.x > player->pos.x - 40.0f && cm->pos.x < player->pos.x + 40.0f)) 
-                                {
-                                    f32 randomRoll = randomF32();
-                                    if (randomRoll < 0.1f) {
-                                        cm->cpu.currentAction = CPU_ACTION_WALK_AWAY_FROM_PLAYER;
-                                        cm->cpu.timer = 0.125f + 0.25f * randomF32();
-                                        break;
-                                    }
-                                    if (randomRoll < 0.2f) {
-                                        cm->cpu.currentAction = CPU_ACTION_WALK_TOWARDS_PLAYER;
-                                        cm->cpu.timer = 0.125f + 0.25f * randomF32();
-                                        break;
-                                    }
-                                    else if (randomRoll < 0.8) {
-                                        cm->facing = getCPUCardmanFacingForMoveDir(cm, moveDir);
-                                        cm->state = CARDMAN_STATE_ATTACKING;
-                                        setCardmanAttackInfo(cm);
-                                        setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
-                                        startAnimState(&cm->animState);
-                                        break;
-                                    }
-                                    else {
-                                        cm->cpu.currentAction = CPU_ACTION_WAIT;
-                                        cm->cpu.timer = 0.3f + 0.2f * randomF32();
-                                        cm->state = CARDMAN_STATE_IDLE;
-                                        setAnimState(cm, getCardmanIdleAnim(cm));
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            if (distToPlayer > attackRange * 1.5f) {
-                                while (true) {
-                                    f32 randomRoll = randomF32();
-                                    if (randomRoll < 0.7f) {
-                                        cm->cpu.currentAction = CPU_ACTION_WALK_TOWARDS_PLAYER;
-                                        cm->cpu.timer = 1.0f + 3.0f * randomF32();
-                                        break;
-                                    }
-                                    else if (randomRoll < 0.8) {
-                                        cm->cpu.currentAction = CPU_ACTION_WAIT;
-                                        cm->cpu.timer = 0.5f + 1.0f * randomF32();
-                                        cm->state = CARDMAN_STATE_IDLE;
-                                        setAnimState(cm, getCardmanIdleAnim(cm));
-                                        break;
-                                    }
-                                    else {
-                                        if (cm->dashLevel > 0) {
-                                            cm->state = CARDMAN_STATE_DASHING;
-                                            cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
-                                            cm->dodgedAttackDuringThisDodge = false;
-                                            cm->dashTimer = 0.3f;
-                                            setAnimState(cm, getCardmanDashingAnim(cm));
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            else if (distToPlayer > attackRange) {
-                                while (true) {
-                                    f32 randomRoll = randomF32();
-                                    if (randomRoll < 0.2f) {
-                                        cm->cpu.currentAction = CPU_ACTION_WAIT;
-                                        cm->cpu.timer = 0.25f + 0.5f * randomF32();
-                                        cm->state = CARDMAN_STATE_IDLE;
-                                        setAnimState(cm, getCardmanIdleAnim(cm));
-                                        break;
-                                    }
-                                    else if (randomRoll < 0.5f) {
-                                        cm->cpu.currentAction = CPU_ACTION_WALK_TOWARDS_PLAYER;
-                                        cm->cpu.timer = 0.1f + 0.5f * randomF32();
-                                        break;
-                                    }
-                                    else if (randomRoll < 0.6f) {
-                                        if (cm->backstepLevel > 0) {
-                                            cm->state = CARDMAN_STATE_DASHING;
-                                            cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
-                                            cm->dodgedAttackDuringThisDodge = false;
-                                            cm->dashTimer = 0.3f;
-                                            setAnimState(cm, getCardmanBackstepAnim(cm));
-                                            break;
-                                        }
-                                    }
-                                    else if (randomRoll < 0.7f) {
-                                        if (cm->dashLevel > 0) {
-                                            cm->state = CARDMAN_STATE_DASHING;
-                                            cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
-                                            cm->dodgedAttackDuringThisDodge = false;
-                                            cm->dashTimer = 0.3f;
-                                            setAnimState(cm, getCardmanDashingAnim(cm));
-                                            break;
-                                        }
-                                    }
-                                    else {
-                                        cm->state = CARDMAN_STATE_ATTACKING;
-                                        setCardmanAttackInfo(cm);
-                                        setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
-                                        startAnimState(&cm->animState);
-                                        break;
-                                    }
-                                }
-                            }
-                            else {
-                                while (true) {
-                                    f32 randomRoll = randomF32();
-                                    if (randomRoll < 0.4f) {
-                                        cm->cpu.currentAction = CPU_ACTION_WAIT;
-                                        cm->cpu.timer = 0.15f + 0.25f * randomF32();
-                                        cm->state = CARDMAN_STATE_IDLE;
-                                        setAnimState(cm, getCardmanIdleAnim(cm));
-                                        break;
-                                    }
-                                    else if (randomRoll < 0.5f) {
-                                        if (cm->backstepLevel > 0) {
-                                            cm->state = CARDMAN_STATE_DASHING;
-                                            cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
-                                            cm->dodgedAttackDuringThisDodge = false;
-                                            cm->dashTimer = 0.3f;
-                                            setAnimState(cm, getCardmanBackstepAnim(cm));
-                                            break;
-                                        }
-                                    }
-                                    else {
-                                        cm->state = CARDMAN_STATE_ATTACKING;
-                                        setCardmanAttackInfo(cm);
-                                        setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
-                                        startAnimState(&cm->animState);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    f32 enemySpeed = getEnemySpeedForLevel(cm->speedLevel);
-                    if (cm->cpu.currentAction == CPU_ACTION_WALK_TOWARDS_PLAYER) {
-                        cm->cpu.timer -= dt;
-
-                        vec2 moveDir = vec2Normalize(cmToPlayer);
-                        cm->facing = getCPUCardmanFacingForMoveDir(cm, moveDir);
-                        f32 distToPlayer = vec2Length(cmToPlayer);
-                        cm->vel = vec2ScalarMul(enemySpeed, moveDir);
-
-                        setAnimStateWithSpeed(cm, getCardmanWalkingAnim(cm), enemySpeed / 150.0f);
-
-                        if (vec2Length(cmToPlayer) < 60.0f && randomF32() < 0.1f) {
-                            cm->state = CARDMAN_STATE_ATTACKING;
-                            setCardmanAttackInfo(cm);
-                            setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
-                            startAnimState(&cm->animState);
-                        }
-                    }
-                    else if (cm->cpu.currentAction == CPU_ACTION_WALK_AWAY_FROM_PLAYER) {
-                        cm->cpu.timer -= dt;
-
-                        vec2 moveDir = vec2Normalize(cmToPlayer);
-                        cm->facing = getCPUCardmanFacingForMoveDir(cm, moveDir);
-                        f32 distToPlayer = vec2Length(cmToPlayer);
-                        cm->vel = vec2ScalarMul(enemySpeed, vec2Negate(moveDir));
-
-                        setAnimStateWithSpeed(cm, getCardmanWalkingAnim(cm), enemySpeed / 150.0f);
+                    if (vec2Length(cmToPlayer) < 60.0f) {
+                        cm->state = CARDMAN_STATE_ATTACKING;
+                        setCardmanAttackInfo(cm);
+                        setAnimState(cm, cm->attack.animKey);
+                        startAnimState(&cm->animState);
                     }
                 } break;
                 case CARDMAN_STATE_ATTACKING: {
-                    cm->cpu.timer = 0.0f; // force re-evaluate
                     cm->vel = (vec2){
                         .x = 0.0f,
                         .y = 0.0f
@@ -1330,67 +1048,6 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                     if (cm->suit == CARD_SUIT_DIAMOND && cm->animState.totalFrames >= 40.0f && !cm->attack.spawnedBullets) {
                         cm->attack.spawnedBullets = true;
                         spawnCardmanBullets(cm);
-                    }
-
-                    if (cm->animState.totalFrames >= cm->attack.linkStartFrame) {
-                        f32 randomRoll = randomF32();
-                        if (randomRoll < 0.8f) {
-
-                        }
-                        else if (randomRoll < 0.9f) {
-                            if (cm->attackComboLevel > cm->attack.comboIndex) {
-                                cm->state = CARDMAN_STATE_ATTACKING;
-                                setCardmanAttackInfo(cm);
-                                setAnimStateWithSpeed(cm, cm->attack.animKey, cm->attack.speedMultiplier);
-                                startAnimState(&cm->animState);
-                            }
-                        }
-                        else if (randomRoll < 0.95f) {
-                            if (cm->dashLevel > 0) {
-                                vec2 moveDir = {0};
-                                if (cm->facing == DIRECTION_UP) {
-                                    moveDir.y = -1.0f;
-                                }
-                                if (cm->facing == DIRECTION_DOWN) {
-                                    moveDir.y = 1.0f;
-                                }
-                                if (cm->facing == DIRECTION_LEFT) {
-                                    moveDir.x = -1.0f;
-                                }
-                                if (cm->facing == DIRECTION_RIGHT) {
-                                    moveDir.x = 1.0f;
-                                }
-
-                                cm->state = CARDMAN_STATE_DASHING;
-                                cm->dashVel = vec2ScalarMul(getDashSpeedForLevel(cm->dashLevel), moveDir);
-                                cm->dodgedAttackDuringThisDodge = false;
-                                cm->dashTimer = 0.3f;
-                                setAnimState(cm, getCardmanBackstepAnim(cm));
-                            }
-                        }
-                        else {
-                            if (cm->backstepLevel > 0) {
-                                vec2 moveDir = {0};
-                                if (cm->facing == DIRECTION_UP) {
-                                    moveDir.y = -1.0f;
-                                }
-                                if (cm->facing == DIRECTION_DOWN) {
-                                    moveDir.y = 1.0f;
-                                }
-                                if (cm->facing == DIRECTION_LEFT) {
-                                    moveDir.x = -1.0f;
-                                }
-                                if (cm->facing == DIRECTION_RIGHT) {
-                                    moveDir.x = 1.0f;
-                                }
-
-                                cm->state = CARDMAN_STATE_DASHING;
-                                cm->dashVel = vec2ScalarMul(-1.0f * getBackstepSpeedForLevel(cm->backstepLevel), moveDir);
-                                cm->dodgedAttackDuringThisDodge = false;
-                                cm->dashTimer = 0.3f;
-                                setAnimState(cm, getCardmanBackstepAnim(cm));
-                            }
-                        }
                     }
                 } break;
             }
@@ -1824,9 +1481,6 @@ cmCollisionCheckDone:
                     player->hitPoints = player->maxHitpoints;
                     pcInfo->phase = PLAYED_CARD_PHASE_MOVE_PLAYER_PAUSE;
 
-                    aob->newUpgradeTimer = 1.0f;
-                    aob->newUpgradeType = pu;
-
                     setAnimState(player, getCardmanPlayCardEndAnim(player));
                 }
             } break;
@@ -1921,10 +1575,6 @@ cmCollisionCheckDone:
                 startAnimState(&cm->animState);
             }
         }
-    }
-
-    if (aob->newUpgradeTimer > 0.0f) {
-        aob->newUpgradeTimer -= dt;
     }
 }
 
@@ -2345,175 +1995,13 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
         spriteManPopMatrix();
     }
 
-    if (aob->newUpgradeTimer > 0.0f) {
-        sprite upgradeBannerSprite = defaultSprite();
-        upgradeBannerSprite.pos.x = 320.0f;
-        upgradeBannerSprite.pos.y = 180.0f;
-        upgradeBannerSprite.anchor.x = 0.5f;
-        upgradeBannerSprite.atlasKey = "atlas";
-        upgradeBannerSprite.frameKey = "upgrade_panel";
-
-        if (aob->newUpgradeTimer > 0.7f) {
-            f32 t = 1.0f - ((aob->newUpgradeTimer - 0.7f) / 0.3f);
-            upgradeBannerSprite.alpha = t;
-            if (upgradeBannerSprite.alpha == 0.0f) {
-                upgradeBannerSprite.alpha = 0.001f;
-            }
-            upgradeBannerSprite.pos.y = 170.0f - t * 40.0f;
-        }
-        else if (aob->newUpgradeTimer > 0.3f) {
-            upgradeBannerSprite.pos.y = 130.0f;
-        }
-        else {
-            f32 t = aob->newUpgradeTimer / 0.3f;
-            upgradeBannerSprite.alpha = t;
-            if (upgradeBannerSprite.alpha == 0.0f) {
-                upgradeBannerSprite.alpha = 0.001f;
-            }
-            upgradeBannerSprite.pos.y = 130.0f - (1.0f - t) * 40.0f;
-        }
-
-        spriteManAddSprite(upgradeBannerSprite);
-
-        char *upgradeText = "";
-        switch (aob->newUpgradeType) {
-        case POWERUP_TYPE_SPEED:
-            upgradeText = "+spd";
-            break;
-        case POWERUP_TYPE_HITPOINTS:
-            upgradeText = "+hp";
-            break;
-        case POWERUP_TYPE_DASH:
-            upgradeText = "+dash";
-            break;
-        case POWERUP_TYPE_BACKSTEP:
-            upgradeText = "+bckstp";
-            break;
-        case POWERUP_TYPE_ATTACK_DAMAGE:
-            upgradeText = "+atk";
-            break;
-        case POWERUP_TYPE_ATTACK_SPEED:
-            upgradeText = "+atk spd";
-            break;
-        case POWERUP_TYPE_ATTACK_COMBO:
-            upgradeText = "+combo";
-            break;
-        case POWERUP_TYPE_KNOCKBACK:
-            upgradeText = "+knckbck";
-            break;
-        case POWERUP_TYPE_INCREASE_ENEMY_HITSTUN:
-            upgradeText = "+e.hitstun";
-            break;
-        case POWERUP_TYPE_DECREASE_PLAYER_HITSTUN:
-            upgradeText = "-p.hitstun";
-            break;
-        case POWERUP_TYPE_INVINCIBILITY_FRAMES:
-            upgradeText = "+iframes";
-            break;
-        }
-
-        spriteManAddText((sprite_text){
-            .x = upgradeBannerSprite.pos.x - 30.0f,
-            .y = upgradeBannerSprite.pos.y + 8.0f,
-            .text = upgradeText,
-            .alpha = upgradeBannerSprite.alpha,
-            .fontKey = "font"
-        });
-    }
-
     if (aob->guideOpen) {
         sprite topBannerSprite = defaultSprite();
-        topBannerSprite.pos.x = 64.0f;
-        topBannerSprite.pos.y = 68.0f;
-        topBannerSprite.textureKey = "guide";
+        topBannerSprite.pos.x = 48.0f;
+        topBannerSprite.pos.y = 28.0f;
+        topBannerSprite.atlasKey = "atlas";
+        topBannerSprite.frameKey = "guide";
         spriteManAddSprite(topBannerSprite);
-
-        f32 currTextY = 100.0f;
-        f32 textInc = 16.0f;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = "updgrade levels:",
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("spd: ", tempStringFromI32(aob->playerCardman->speedLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("hp: ", tempStringFromI32(aob->playerCardman->hitpointLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("dash: ", tempStringFromI32(aob->playerCardman->dashLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("bckstp: ", tempStringFromI32(aob->playerCardman->backstepLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("atk: ", tempStringFromI32(aob->playerCardman->attackDamageLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("atk spd: ", tempStringFromI32(aob->playerCardman->attackSpeedLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("combo: ", tempStringFromI32(aob->playerCardman->attackComboLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("knckbck: ", tempStringFromI32(aob->playerCardman->knockbackLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("e.hitstun: ", tempStringFromI32(aob->playerCardman->enemyHitstunLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("p.hitstun: ", tempStringFromI32(aob->playerCardman->playerHitstunLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
-        spriteManAddText((sprite_text){
-            .x = 68.0f,
-            .y = currTextY,
-            .text = tempStringAppend("iframes: ", tempStringFromI32(aob->playerCardman->invincibilityFramesLevel)),
-            .fontKey = "font"
-        });
-        currTextY += textInc;
     }
 }
 

@@ -514,6 +514,10 @@ void spriteManAddText (sprite_text textInfo) {
             ++currentLetter;
             xOffset += coord->advance;
 
+            if (textInfo.alpha != 0.0f) {
+                letterSprite.alpha = textInfo.alpha;
+            }
+
             sprite_listPush(&spriteMan->sprites, letterSprite);
         }
     }

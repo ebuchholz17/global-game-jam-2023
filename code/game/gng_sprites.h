@@ -59,6 +59,7 @@ typedef struct sprite_transform {
 typedef struct sprite_text {
     f32 x;
     f32 y;
+    f32 alpha;
     char *text;
     char *fontKey;
 } sprite_text;

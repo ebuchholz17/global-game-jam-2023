@@ -250,6 +250,13 @@ UPDATE_GNG_GAME(updateGNGGame) {
             .key = "atlas"
         });
         asset_to_load_listPush(assetList, (asset_to_load){
+            .name = "guide",
+            .path = "assets/guide.bmp",
+            .type = ASSET_TO_LOAD_TYPE_BITMAP,
+            .loaded = false,
+            .key = "guide"
+        });
+        asset_to_load_listPush(assetList, (asset_to_load){
             .name = "font",
             .path = "assets/font.bmp",
             .type = ASSET_TO_LOAD_TYPE_BITMAP,

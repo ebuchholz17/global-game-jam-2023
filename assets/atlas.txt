@@ -5,7 +5,7 @@ filter: Linear,Linear
 repeat: none
 a_key_prompt
   rotate: false
-  xy: 208, 2
+  xy: 298, 2
   size: 23, 25
   orig: 23, 25
   offset: 0, 0
@@ -901,7 +901,7 @@ red_q
   index: -1
 right_button_prompt
   rotate: false
-  xy: 233, 2
+  xy: 323, 2
   size: 29, 28
   orig: 29, 28
   offset: 0, 0
@@ -1100,5 +1100,12 @@ top_banner
   xy: 2, 32
   size: 464, 28
   orig: 464, 28
+  offset: 0, 0
+  index: -1
+upgrade_panel
+  rotate: false
+  xy: 208, 2
+  size: 88, 23
+  orig: 88, 23
   offset: 0, 0
   index: -1

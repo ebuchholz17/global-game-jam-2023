@@ -178,7 +178,11 @@ powerup_type getUpgradeTypeForSuitValue ( card_suit suit, card_val value) {
 }
 
 f32 getMoveSpeedForLevel (u32 level) {
-    return 130.0f + 30.0f * (f32)level;
+    return 130.0f + 20.0f * (f32)level;
+}
+
+f32 getEnemySpeedForLevel (u32 level) {
+    return 50.0f + 10.0f * (f32)level;
 }
 
 f32 getHitpointsForLevel (u32 level) {
@@ -206,7 +210,7 @@ f32 getAttackSpeedMultiplierForLevel (u32 level) {
 }
 
 f32 getKnockbackForLevel (u32 level) {
-    return 400.0f + 100.0f * (f32)level;
+    return 450.0f + 150.0f * (f32)level;
 }
 
 f32 getEnemyHitstunForLevel (u32 level) {
@@ -214,7 +218,7 @@ f32 getEnemyHitstunForLevel (u32 level) {
 }
 
 f32 getPlayerHitstunForLevel (u32 level) {
-    f32 hitstun = 0.75f - 0.125f * (f32)level;
+    f32 hitstun = 0.5f - 0.1f * (f32)level;
     if (hitstun < 0.0f) { hitstun = 0.0f; }
     return hitstun;
 }

@@ -16,6 +16,7 @@ typedef struct aob_input {
     input_key attack;
     input_key dash;
     input_key playCard;
+    input_key pause;
 } aob_input;
 
 typedef struct animation_state {
@@ -122,12 +123,27 @@ typedef enum {
     POWERUP_TYPE_INVINCIBILITY_FRAMES,
 } powerup_type;
 
+typedef enum {
+    CPU_ACTION_WALK_TOWARDS_PLAYER,
+    CPU_ACTION_WALK_AWAY_FROM_PLAYER,
+    CPU_ACTION_WAIT,
+    CPU_ACTION_IN_LINE_WITH_PLAYER
+} cpu_action;
+
+typedef struct cardman_cpu_state {
+    cpu_action currentAction;
+    vec2 walkTarget;
+    f32 timer;
+} cardman_cpu_state;
+
 typedef struct cardman {
     b32 active;
 
     cardman_owner owner;
     card_suit suit;
     card_val value;
+
+    cardman_cpu_state cpu;
 
     cardman_attack attack;
 
@@ -276,10 +292,13 @@ typedef struct bullet_star {
 #define BULLET_SPEED 200.0f
 #define BULLET_LIFETIME 1.5f
 
+
 typedef struct aob_state {
     b32 initialized;
 
     f32 spawnTimer;
+    f32 difficultyTimer;
+    u32 difficultyPoints;
 
     cardman cardmen[MAX_NUM_CARDMEN];
     cardman *playerCardman;
@@ -301,6 +320,10 @@ typedef struct aob_state {
     bullet_star bullets[MAX_NUM_BULLETS];
 
     cardman_attack_hash_map allAttacks;
+    b32 guideOpen;
+
+    f32 newUpgradeTimer;
+    powerup_type newUpgradeType;
 } aob_state;
 
 #endif
