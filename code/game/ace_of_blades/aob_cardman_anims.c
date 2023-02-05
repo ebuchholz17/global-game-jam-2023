@@ -390,3 +390,91 @@ char *getCardmanKatanaAnim (cardman *cm) {
     return getPermStringForTempAnimKey(tempStringAppend(tempStringAppend(suit, dir), "katana_0"));
 }
 
+char *getCardmanDashingAnim (cardman *cm) {
+    if (cm->facing == DIRECTION_UP) {
+        return "cardman_up_dash";
+    }
+    else {
+        char *suit = 0;
+        switch (cm->suit) {
+            case CARD_SUIT_SPADE: { 
+                suit = "spade_";
+            } break;
+            case CARD_SUIT_CLUB: { 
+                suit = "club_";
+            } break;
+            case CARD_SUIT_DIAMOND: { 
+                suit = "diamond_";
+            } break;
+            case CARD_SUIT_HEART: { 
+                suit = "heart_";
+            } break;
+        }
+        ASSERT(suit != 0);
+
+        char *dir = 0;
+        switch (cm->facing) {
+            case DIRECTION_UP: { 
+                dir = "up_";
+            } break;
+            case DIRECTION_DOWN: { 
+                dir = "down_";
+            } break;
+            case DIRECTION_LEFT: { 
+                dir = "left_";
+            } break;
+            case DIRECTION_RIGHT: { 
+                dir = "right_";
+            } break;
+        }
+        ASSERT(dir != 0);
+
+        char *result = tempStringAppend(suit, dir);
+        return getPermStringForTempAnimKey(tempStringAppend(result, "dash"));
+    }
+}
+
+char *getCardmanBackstepAnim (cardman *cm) {
+    if (cm->facing == DIRECTION_UP) {
+        return "cardman_up_backstep";
+    }
+    else {
+        char *suit = 0;
+        switch (cm->suit) {
+            case CARD_SUIT_SPADE: { 
+                suit = "spade_";
+            } break;
+            case CARD_SUIT_CLUB: { 
+                suit = "club_";
+            } break;
+            case CARD_SUIT_DIAMOND: { 
+                suit = "diamond_";
+            } break;
+            case CARD_SUIT_HEART: { 
+                suit = "heart_";
+            } break;
+        }
+        ASSERT(suit != 0);
+
+        char *dir = 0;
+        switch (cm->facing) {
+            case DIRECTION_UP: { 
+                dir = "up_";
+            } break;
+            case DIRECTION_DOWN: { 
+                dir = "down_";
+            } break;
+            case DIRECTION_LEFT: { 
+                dir = "left_";
+            } break;
+            case DIRECTION_RIGHT: { 
+                dir = "right_";
+            } break;
+        }
+        ASSERT(dir != 0);
+
+        char *result = tempStringAppend(suit, dir);
+        return getPermStringForTempAnimKey(tempStringAppend(result, "backstep"));
+    }
+}
+

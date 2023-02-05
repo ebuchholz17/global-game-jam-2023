@@ -134,7 +134,7 @@ typedef struct data_asset {
 #define HASH_MAP_TYPE data_asset
 #include "hash_map.h"
 
-#define MAX_NUM_ASSETS_TO_LOAD 50
+#define MAX_NUM_ASSETS_TO_LOAD 250
 typedef struct asset_man {
     asset_to_load_list assetToLoadList;
     b32 allFilesLoaded;

@@ -499,7 +499,7 @@ i32 WINAPI WinMain (HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, i
     platAPI.rngSeedFromTime = (plat_rng_seed_from_time *)rngSeedFromTime;
     platAPI.mainMemorySize = 5 * 1024 * 1024;
     platAPI.mainMemory = VirtualAlloc(0, platAPI.mainMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    platAPI.assetMemorySize = 2 * 1024 * 1024;
+    platAPI.assetMemorySize = 5 * 1024 * 1024;
     platAPI.assetMemory = VirtualAlloc(0, platAPI.assetMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     platAPI.scratchMemorySize = 5 * 1024 * 1024;
     platAPI.scratchMemory = VirtualAlloc(0, platAPI.scratchMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);

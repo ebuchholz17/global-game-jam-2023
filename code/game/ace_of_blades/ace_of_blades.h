@@ -65,7 +65,8 @@ typedef enum {
     CARDMAN_STATE_HITSTUN,
     CARDMAN_STATE_DEFEATED,
     CARDMAN_STATE_FADING_OUT,
-    CARDMAN_STATE_PLAYING_CARD
+    CARDMAN_STATE_PLAYING_CARD,
+    CARDMAN_STATE_DASHING
 } cardman_state;
 
 typedef enum {
@@ -130,17 +131,29 @@ typedef struct cardman {
     f32 fadingTimer;
 
     f32 hitPoints;
+
+    b32 canDash;
+    f32 dashSpeed;
+    b32 canBackStep;
+    f32 backstepSpeed;
+
+    f32 dashTimer;
+    vec2 dashVel;
+
+    vec2 lastPositions[3];
+    u32 lastPosCounter;
+    u32 lastPosIndex;
 } cardman;
 typedef cardman *cardman_ptr;
 #define LIST_TYPE cardman_ptr
-#include "list.h"
+#include "../list.h"
 
 typedef struct cardman_collision {
     cardman *first;
     cardman *second;
 } cardman_collision;
 #define LIST_TYPE cardman_collision
-#include "list.h"
+#include "../list.h"
 
 #define MAX_NUM_CARDMEN 100
 
@@ -194,7 +207,7 @@ typedef struct deck_card {
     card_val value;
 } deck_card;
 #define LIST_TYPE deck_card
-#include "list.h"
+#include "../list.h"
 
 typedef struct deck {
     deck_card_list cards;
@@ -207,13 +220,15 @@ typedef struct player_upgrade {
     card_val value;
 } player_upgrade;
 #define LIST_TYPE player_upgrade
-#include "list.h"
+#include "../list.h"
 
 #define NUM_DECKS 4
 #define STARTING_CARDS_PER_DECK 5
 
 typedef struct aob_state {
     b32 initialized;
+
+    f32 spawnTimer;
 
     cardman cardmen[MAX_NUM_CARDMEN];
     cardman *playerCardman;
@@ -226,6 +241,8 @@ typedef struct aob_state {
 
     deck decks[NUM_DECKS];
     player_upgrade_list upgrades;
+
+    cardman *lastHitEnemy;
 
     b32 animationsLoaded;
     char_anim_data_ptr_hash_map animations;

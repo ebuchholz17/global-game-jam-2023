@@ -309,6 +309,69 @@ UPDATE_GNG_GAME(updateGNGGame) {
             {.key = "diamond_play_card_1", .path = "assets/hitbox/diamond_play_card_1.txt" },
             {.key = "heart_play_card_0", .path = "assets/hitbox/heart_play_card_0.txt" },
             {.key = "heart_play_card_1", .path = "assets/hitbox/heart_play_card_1.txt" },
+
+            {.key = "spade_left_dash", .path = "assets/hitbox/spade_left_dash.txt" },
+            {.key = "spade_right_dash", .path = "assets/hitbox/spade_right_dash.txt" },
+            {.key = "spade_down_dash", .path = "assets/hitbox/spade_down_dash.txt" },
+            {.key = "spade_left_backstep", .path = "assets/hitbox/spade_left_backstep.txt" },
+            {.key = "spade_right_backstep", .path = "assets/hitbox/spade_right_backstep.txt" },
+            {.key = "spade_down_backstep", .path = "assets/hitbox/spade_down_backstep.txt" },
+
+            {.key = "club_left_dash", .path = "assets/hitbox/club_left_dash.txt" },
+            {.key = "club_right_dash", .path = "assets/hitbox/club_right_dash.txt" },
+            {.key = "club_down_dash", .path = "assets/hitbox/club_down_dash.txt" },
+            {.key = "club_left_backstep", .path = "assets/hitbox/club_left_backstep.txt" },
+            {.key = "club_right_backstep", .path = "assets/hitbox/club_right_backstep.txt" },
+            {.key = "club_down_backstep", .path = "assets/hitbox/club_down_backstep.txt" },
+
+            {.key = "heart_left_dash", .path = "assets/hitbox/heart_left_dash.txt" },
+            {.key = "heart_right_dash", .path = "assets/hitbox/heart_right_dash.txt" },
+            {.key = "heart_down_dash", .path = "assets/hitbox/heart_down_dash.txt" },
+            {.key = "heart_left_backstep", .path = "assets/hitbox/heart_left_backstep.txt" },
+            {.key = "heart_right_backstep", .path = "assets/hitbox/heart_right_backstep.txt" },
+            {.key = "heart_down_backstep", .path = "assets/hitbox/heart_down_backstep.txt" },
+
+            {.key = "diamond_left_dash", .path = "assets/hitbox/diamond_left_dash.txt" },
+            {.key = "diamond_right_dash", .path = "assets/hitbox/diamond_right_dash.txt" },
+            {.key = "diamond_down_dash", .path = "assets/hitbox/diamond_down_dash.txt" },
+            {.key = "diamond_left_backstep", .path = "assets/hitbox/diamond_left_backstep.txt" },
+            {.key = "diamond_right_backstep", .path = "assets/hitbox/diamond_right_backstep.txt" },
+            {.key = "diamond_down_backstep", .path = "assets/hitbox/diamond_down_backstep.txt" },
+
+            {.key = "cardman_up_dash", .path = "assets/hitbox/cardman_up_dash.txt" },
+            {.key = "cardman_up_backstep", .path = "assets/hitbox/cardman_up_backstep.txt" },
+
+            {.key = "cardman_up_katana_1", .path = "assets/hitbox/cardman_up_katana_1.txt" },
+            {.key = "cardman_up_katana_2", .path = "assets/hitbox/cardman_up_katana_2.txt" },
+            {.key = "cardman_up_punch_0", .path = "assets/hitbox/cardman_up_punch_0.txt" },
+            {.key = "cardman_up_punch_1", .path = "assets/hitbox/cardman_up_punch_1.txt" },
+            {.key = "cardman_up_spear_0", .path = "assets/hitbox/cardman_up_spear_0.txt" },
+            {.key = "cardman_up_spear_1", .path = "assets/hitbox/cardman_up_spear_1.txt" },
+            {.key = "cardman_up_wand", .path = "assets/hitbox/cardman_up_wand.txt" },
+            {.key = "club_down_punch_0", .path = "assets/hitbox/club_down_punch_0.txt" },
+            {.key = "club_down_punch_1", .path = "assets/hitbox/club_down_punch_1.txt" },
+            {.key = "club_left_punch_0", .path = "assets/hitbox/club_left_punch_0.txt" },
+            {.key = "club_left_punch_1", .path = "assets/hitbox/club_left_punch_1.txt" },
+            {.key = "club_right_punch_0", .path = "assets/hitbox/club_right_punch_0.txt" },
+            {.key = "club_right_punch_1", .path = "assets/hitbox/club_right_punch_1.txt" },
+            {.key = "diamond_down_wand", .path = "assets/hitbox/diamond_down_wand.txt" },
+            {.key = "diamond_left_wand", .path = "assets/hitbox/diamond_left_wand.txt" },
+            {.key = "diamond_right_wand", .path = "assets/hitbox/diamond_right_wand.txt" },
+            {.key = "heart_down_spear_0", .path = "assets/hitbox/heart_down_spear_0.txt" },
+            {.key = "heart_down_spear_1", .path = "assets/hitbox/heart_down_spear_1.txt" },
+            {.key = "heart_left_spear_0", .path = "assets/hitbox/heart_left_spear_0.txt" },
+            {.key = "heart_left_spear_1", .path = "assets/hitbox/heart_left_spear_1.txt" },
+            {.key = "heart_right_spear_0", .path = "assets/hitbox/heart_right_spear_0.txt" },
+            {.key = "heart_right_spear_1", .path = "assets/hitbox/heart_right_spear_1.txt" },
+            {.key = "heart_spear_spin", .path = "assets/hitbox/heart_spear_spin.txt" },
+            {.key = "spade_down_katana_1", .path = "assets/hitbox/spade_down_katana_1.txt" },
+            {.key = "spade_down_katana_2", .path = "assets/hitbox/spade_down_katana_2.txt" },
+            {.key = "spade_left_katana_1", .path = "assets/hitbox/spade_left_katana_1.txt" },
+            {.key = "spade_left_katana_2", .path = "assets/hitbox/spade_left_katana_2.txt" },
+            {.key = "spade_right_katana_1", .path = "assets/hitbox/spade_right_katana_1.txt" },
+            {.key = "spade_right_katana_2", .path = "assets/hitbox/spade_right_katana_2.txt" },
+            {.key = "star", .path = "assets/hitbox/star.txt" },
+
         };
         u32 numHitboxFiles = sizeof(hitboxFiles) / sizeof(key_path_pair);
         for (u32 hitboxIndex = 0; hitboxIndex < numHitboxFiles; hitboxIndex++) {
@@ -463,7 +526,7 @@ UPDATE_GNG_GAME(updateGNGGame) {
             remainingTime -= updateDelta;
             
             // update
-            updateAceOfBlades(input, &state->vInput, timeStep, &state->memory, &scratchMemory);
+            updateAceOfBlades(input, &state->vInput, timeStep, &state->memory, &scratchMemory, platAPI);
 
             resetInput(input, &state->vInput);
         }

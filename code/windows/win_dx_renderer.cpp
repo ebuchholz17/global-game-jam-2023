@@ -263,7 +263,7 @@ D3D12_RASTERIZER_DESC getDefaultRasterizerState () {
     D3D12_RASTERIZER_DESC result = {};
 
     result.FillMode = D3D12_FILL_MODE_SOLID;
-    result.CullMode = D3D12_CULL_MODE_BACK;
+    result.CullMode = D3D12_CULL_MODE_NONE;
     result.FrontCounterClockwise = true;
     result.DepthBias = 0;
     result.DepthBiasClamp = 0.0f;

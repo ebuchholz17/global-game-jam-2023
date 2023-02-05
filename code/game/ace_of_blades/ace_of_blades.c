@@ -30,7 +30,7 @@ void setAnimState (cardman *cardman, char *key) {
     cardman->animState.speedMultiplier = 1.0f;
 }
 
-void activateCardMan (cardman_owner owner, vec2 pos) {
+void activateCardMan (cardman_owner owner, vec2 pos, deck_card card) {
     for (u32 cardmanIndex = 0; cardmanIndex < MAX_NUM_CARDMEN; cardmanIndex++) {
         cardman *cm = &aob->cardmen[cardmanIndex];
         if (!cm->active) {
@@ -40,13 +40,13 @@ void activateCardMan (cardman_owner owner, vec2 pos) {
                 .active = true,
                 .owner = owner,
 
-                .suit = randomSuit(),
-                .value = randomCardVal(),
+                .suit = card.suit,
+                .value = card.value,
 
                 .state = CARDMAN_STATE_IDLE,
                 .facing = DIRECTION_DOWN,
                 .pos = pos,
-                .hitPoints = 100.0f,
+                .hitPoints = 40.0f,
                 //.vel
             };
 
@@ -109,6 +109,13 @@ deck_card makeMatchingCard (card_suit suit, card_val value) {
     return result;
 }
 
+deck_card makeRandomCard () {
+    return (deck_card){
+        .suit = randomSuit(),
+        .value = randomCardVal()
+    };
+}
+
 void initAceOfBlades (aob_state* aobState, mem_arena *memory) {
     aob = aobState;
     zeroMemory((u8 *)aob, sizeof(aob_state));
@@ -168,15 +175,81 @@ void initAceOfBlades (aob_state* aobState, mem_arena *memory) {
     loadAOBHitboxData("heart_play_card_0", memory);
     loadAOBHitboxData("heart_play_card_1", memory);
 
+    loadAOBHitboxData("spade_left_dash", memory);
+    loadAOBHitboxData("spade_right_dash", memory);
+    loadAOBHitboxData("spade_down_dash", memory);
+    loadAOBHitboxData("spade_left_backstep", memory);
+    loadAOBHitboxData("spade_right_backstep", memory);
+    loadAOBHitboxData("spade_down_backstep", memory);
+
+    loadAOBHitboxData("club_left_dash", memory);
+    loadAOBHitboxData("club_right_dash", memory);
+    loadAOBHitboxData("club_down_dash", memory);
+    loadAOBHitboxData("club_left_backstep", memory);
+    loadAOBHitboxData("club_right_backstep", memory);
+    loadAOBHitboxData("club_down_backstep", memory);
+
+    loadAOBHitboxData("diamond_left_dash", memory);
+    loadAOBHitboxData("diamond_right_dash", memory);
+    loadAOBHitboxData("diamond_down_dash", memory);
+    loadAOBHitboxData("diamond_left_backstep", memory);
+    loadAOBHitboxData("diamond_right_backstep", memory);
+    loadAOBHitboxData("diamond_down_backstep", memory);
+
+    loadAOBHitboxData("heart_left_dash", memory);
+    loadAOBHitboxData("heart_right_dash", memory);
+    loadAOBHitboxData("heart_down_dash", memory);
+    loadAOBHitboxData("heart_left_backstep", memory);
+    loadAOBHitboxData("heart_right_backstep", memory);
+    loadAOBHitboxData("heart_down_backstep", memory);
+
+    loadAOBHitboxData("cardman_up_dash", memory);
+    loadAOBHitboxData("cardman_up_backstep", memory);
+
+    loadAOBHitboxData("cardman_up_katana_1", memory);
+    loadAOBHitboxData("cardman_up_katana_2", memory);
+    loadAOBHitboxData("cardman_up_punch_0", memory);
+    loadAOBHitboxData("cardman_up_punch_1", memory);
+    loadAOBHitboxData("cardman_up_spear_0", memory);
+    loadAOBHitboxData("cardman_up_spear_1", memory);
+    loadAOBHitboxData("cardman_up_wand", memory);
+    loadAOBHitboxData("club_down_punch_0", memory);
+    loadAOBHitboxData("club_down_punch_1", memory);
+    loadAOBHitboxData("club_left_punch_0", memory);
+    loadAOBHitboxData("club_left_punch_1", memory);
+    loadAOBHitboxData("club_right_punch_0", memory);
+    loadAOBHitboxData("club_right_punch_1", memory);
+    loadAOBHitboxData("diamond_down_wand", memory);
+    loadAOBHitboxData("diamond_left_wand", memory);
+    loadAOBHitboxData("diamond_right_wand", memory);
+    loadAOBHitboxData("heart_down_spear_0", memory);
+    loadAOBHitboxData("heart_down_spear_1", memory);
+    loadAOBHitboxData("heart_left_spear_0", memory);
+    loadAOBHitboxData("heart_left_spear_1", memory);
+    loadAOBHitboxData("heart_right_spear_0", memory);
+    loadAOBHitboxData("heart_right_spear_1", memory);
+    loadAOBHitboxData("heart_spear_spin", memory);
+    loadAOBHitboxData("spade_down_katana_1", memory);
+    loadAOBHitboxData("spade_down_katana_2", memory);
+    loadAOBHitboxData("spade_left_katana_1", memory);
+    loadAOBHitboxData("spade_left_katana_2", memory);
+    loadAOBHitboxData("spade_right_katana_1", memory);
+    loadAOBHitboxData("spade_right_katana_2", memory);
+    loadAOBHitboxData("star", memory);
+
     vec2 playerPos = (vec2){ .x = 240.0f, .y = 120.0f};
-    activateCardMan(CARDMAN_OWNER_PLAYER, playerPos);
+    deck_card playerCard = makeRandomCard();
+    activateCardMan(CARDMAN_OWNER_PLAYER, playerPos, playerCard);
 
     aob->upgrades = player_upgrade_listInit(memory, 300);
 
-    for (u32 i = 0; i < 20; i++) {
-        f32 t = (f32)i / 20.0f;
-        vec2 pos = vec2Add(playerPos, (vec2){ .x = cos2PI(t) * 180.0f, .y = sin2PI(t) * 180.0f });
-        activateCardMan(CARDMAN_OWNER_CPU, pos);
+    for (u32 i = 0; i < 2; i++) {
+        f32 t = randomF32();
+        vec2 pos = vec2Add(playerPos, (vec2){ 
+            .x = cos2PI(t) * 280.0f + 100.0f * randomF32(), 
+            .y = sin2PI(t) * 280.0f + 100.0f * randomF32() 
+        });
+        activateCardMan(CARDMAN_OWNER_CPU, pos, makeRandomCard());
     }
 
     for (u32 i = 0; i < NUM_DECKS; i++) {
@@ -411,11 +484,62 @@ void tryPlayCard (cardman *cm, mem_arena *scratchMemory) {
     }
 }
 
-void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt, 
-                        mem_arena *memory, mem_arena *scratchMemory) 
+b32 testCardmanAttackHitCardman (cardman *attacker, cardman *enemy, 
+                                 char_frame_data *attackerFrame, mat3x3 *attackerTransform) 
 {
+    animation_state *enemyAnimState = &enemy->animState;
+    char_anim_data *enemyAnimData = char_anim_data_ptr_hash_mapGetVal(&aob->animations, enemyAnimState->key);
+    char_frame_data *enemyCurrentFrame = &enemyAnimData->frames[enemyAnimState->currentFrame];
 
+    mat3x3 enemyTransform = mat3x3Translate(enemy->pos.x, enemy->pos.y);
+
+    b32 attackerHitEnemy = false;
+    for (int hitboxIndex = 0; hitboxIndex < attackerFrame->numHitboxes; ++hitboxIndex) {
+        rect hitbox = attackerFrame->hitboxes[hitboxIndex];
+        vec2 hitMin = vec2Mat3x3Mul(*attackerTransform, hitbox.min);
+        vec2 hitMax = vec2Mat3x3Mul(*attackerTransform, hitbox.max);
+        rect transformedHitbox = (rect){ .min = hitMin, .max = hitMax };
+
+        for (int hurtboxIndex = 0; hurtboxIndex < enemyCurrentFrame->numHurtboxes; ++hurtboxIndex) {
+            rect hurtbox = enemyCurrentFrame->hurtboxes[hurtboxIndex];
+
+            vec2 hurtMin = vec2Mat3x3Mul(enemyTransform, hurtbox.min);
+            vec2 hurtMax = vec2Mat3x3Mul(enemyTransform, hurtbox.max);
+            rect transformedHurtbox = (rect){ .min = hurtMin, .max = hurtMax };
+
+            if (rectsIntersect(transformedHitbox, transformedHurtbox)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt, 
+                        mem_arena *memory, mem_arena *scratchMemory, plat_api platAPI) 
+{
     aob_input aobInput = parseGameInput(input, vInput);
+
+
+    aob->spawnTimer += dt;
+    while (aob->spawnTimer > 2.0f) {
+        aob->spawnTimer -= 2.0f;
+        f32 matchingChance = 1.0f / 7.0f;
+        deck_card card;
+        if (randomF32() < matchingChance) {
+            card = makeMatchingCard(aob->playerCardman->suit, aob->playerCardman->value);
+        }
+        else {
+            card = makeRandomCard();
+        }
+
+        f32 t = randomF32();
+        vec2 pos = vec2Add(aob->playerCardman->pos, (vec2){ 
+            .x = cos2PI(t) * 500.0f + 100.0f * randomF32(), 
+            .y = sin2PI(t) * 500.0f + 100.0f * randomF32() 
+        });
+        activateCardMan(CARDMAN_OWNER_CPU, pos, card);
+    }
 
     // update controls/movement
     for (u32 cardmanIndex = 0; cardmanIndex < MAX_NUM_CARDMEN; cardmanIndex++) {
@@ -428,6 +552,12 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
         zeroMemory((u8 *)&cm->hitByInfo, sizeof(cardman_hitby_info));
 
         cm->animState.prevKey = cm->animState.key;
+        cm->lastPosCounter++;
+        if (cm->lastPosCounter > 20) {
+            cm->lastPosCounter = 0;
+            cm->lastPositions[cm->lastPosIndex] = cm->pos;
+            cm->lastPosIndex = (cm->lastPosIndex + 1) % 3;
+        }
 
         if (cm->owner == CARDMAN_OWNER_PLAYER) {
             switch (cm->state) {
@@ -466,6 +596,26 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                     if (aobInput.playCard.justPressed) {
                         tryPlayCard(cm, scratchMemory);
                     }
+                    if (aobInput.dash.justPressed) {
+                        vec2 moveDir = {0};
+                        if (cm->facing == DIRECTION_UP) {
+                            moveDir.y = -1.0f;
+                        }
+                        if (cm->facing == DIRECTION_DOWN) {
+                            moveDir.y = 1.0f;
+                        }
+                        if (cm->facing == DIRECTION_LEFT) {
+                            moveDir.x = -1.0f;
+                        }
+                        if (cm->facing == DIRECTION_RIGHT) {
+                            moveDir.x = 1.0f;
+                        }
+
+                        cm->state = CARDMAN_STATE_DASHING;
+                        cm->dashVel = vec2ScalarMul(-250.0f, moveDir);
+                        cm->dashTimer = 0.3f;
+                        setAnimState(cm, getCardmanBackstepAnim(cm));
+                    }
                 } break;
                 case CARDMAN_STATE_WALKING: {
                     if (!aobInput.up.down &&
@@ -496,6 +646,13 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
 
                         cm->facing = getCardmanFacingForMoveDir(cm, moveDir);
                         setAnimStateWithSpeed(cm, getCardmanWalkingAnim(cm), CARDMAN_SPEED / 150.0f);
+
+                        if (aobInput.dash.justPressed) {
+                            cm->state = CARDMAN_STATE_DASHING;
+                            cm->dashVel = vec2ScalarMul(250.0f, moveDir);
+                            cm->dashTimer = 0.3f;
+                            setAnimState(cm, getCardmanDashingAnim(cm));
+                        }
                     }
 
                     if (aobInput.attack.justPressed) {
@@ -556,6 +713,7 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
                         cm->state = CARDMAN_STATE_ATTACKING;
                         cm->attack = getCardmanAttackInfo(cm);
                         setAnimState(cm, cm->attack.animKey);
+                        startAnimState(&cm->animState);
                     }
                 } break;
                 case CARDMAN_STATE_ATTACKING: {
@@ -590,9 +748,24 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
             cm->pos = vec2Add(cm->pos, vec2ScalarMul(dt, cm->knockbackVel));
         }
 
+        cm->dashTimer -= dt;
+        if (cm->dashTimer < 0.0f) {
+            cm->dashTimer = 0.0f;
+            cm->dashVel = (vec2){0};
+        }
+        else {
+            cm->pos = vec2Add(cm->pos, vec2ScalarMul(dt, cm->dashVel));
+        }
+
         switch (cm->state) {
             case CARDMAN_STATE_WALKING: {
                 cm->pos = vec2Add(cm->pos, vec2ScalarMul(dt, cm->vel));
+            } break;
+            case CARDMAN_STATE_DASHING: {
+                if (cm->dashTimer <= 0.0f) {
+                    cm->state = CARDMAN_STATE_IDLE;
+                    setAnimState(cm, getCardmanIdleAnim(cm));
+                }
             } break;
             case CARDMAN_STATE_HITSTUN: {
                 cm->pos = vec2Add(cm->pos, vec2ScalarMul(dt, cm->vel));
@@ -620,55 +793,56 @@ void updateAceOfBlades (game_input *input, virtual_input *vInput, f32 dt,
 
     cardman *player = aob->playerCardman;
     if (player->state == CARDMAN_STATE_ATTACKING) {
-
         animation_state *playerAnimState = &player->animState;
         char_anim_data *playerAnimData = char_anim_data_ptr_hash_mapGetVal(&aob->animations, playerAnimState->key);
         char_frame_data *playerCurrentFrame = &playerAnimData->frames[playerAnimState->currentFrame];
-
         mat3x3 playerTransform = mat3x3Translate(player->pos.x, player->pos.y);
 
         for (u32 cardmanIndex = 0; cardmanIndex < MAX_NUM_CARDMEN; cardmanIndex++) {
-
             cardman *enemy = &aob->cardmen[cardmanIndex];
 
             if (!enemy->active || enemy == player || enemy->iframesTimer > 0.0f) {
                 continue;
             }
 
-            animation_state *enemyAnimState = &enemy->animState;
-            char_anim_data *enemyAnimData = char_anim_data_ptr_hash_mapGetVal(&aob->animations, enemyAnimState->key);
-            char_frame_data *enemyCurrentFrame = &enemyAnimData->frames[enemyAnimState->currentFrame];
+            b32 hit = testCardmanAttackHitCardman(player, enemy, playerCurrentFrame, &playerTransform);
 
-            mat3x3 enemyTransform = mat3x3Translate(enemy->pos.x, enemy->pos.y);
-
-            b32 playerHitEnemy = false;
-            for (int hitboxIndex = 0; hitboxIndex < playerCurrentFrame->numHitboxes; ++hitboxIndex) {
-                rect hitbox = playerCurrentFrame->hitboxes[hitboxIndex];
-                vec2 hitMin = vec2Mat3x3Mul(playerTransform, hitbox.min);
-                vec2 hitMax = vec2Mat3x3Mul(playerTransform, hitbox.max);
-                rect transformedHitbox = (rect){ .min = hitMin, .max = hitMax };
-
-                for (int hurtboxIndex = 0; hurtboxIndex < enemyCurrentFrame->numHurtboxes; ++hurtboxIndex) {
-                    rect hurtbox = enemyCurrentFrame->hurtboxes[hurtboxIndex];
-
-                    vec2 hurtMin = vec2Mat3x3Mul(enemyTransform, hurtbox.min);
-                    vec2 hurtMax = vec2Mat3x3Mul(enemyTransform, hurtbox.max);
-                    rect transformedHurtbox = (rect){ .min = hurtMin, .max = hurtMax };
-
-                    if (rectsIntersect(transformedHitbox, transformedHurtbox)) {
-                        playerHitEnemy = true;
-                        goto playerVsEnemyHitCheckDone;
-                    }
-                }
-            }
-playerVsEnemyHitCheckDone:
-            if (playerHitEnemy) {
+            if (hit) {
                 enemy->hitByInfo = (cardman_hitby_info){
                     .wasHit = true,
                     .attackOrigin = player->pos,
                     .damage = player->attack.damage * player->attack.damageMultiplier,
                     .knockbackSpeed = 500.0f
                 };
+                aob->lastHitEnemy = enemy;
+            }
+        }
+    }
+
+    if (player->iframesTimer <= 0.0f) {
+        for (u32 cardmanIndex = 0; cardmanIndex < MAX_NUM_CARDMEN; cardmanIndex++) {
+            cardman *enemy = &aob->cardmen[cardmanIndex];
+
+            if (!enemy->active || enemy == player) {
+                continue;
+            }
+
+            if (enemy->state == CARDMAN_STATE_ATTACKING) {
+                animation_state *enemyAnimState = &enemy->animState;
+                char_anim_data *enemyAnimData = char_anim_data_ptr_hash_mapGetVal(&aob->animations, enemyAnimState->key);
+                char_frame_data *enemyCurrentFrame = &enemyAnimData->frames[enemyAnimState->currentFrame];
+                mat3x3 enemyTransform = mat3x3Translate(enemy->pos.x, enemy->pos.y);
+
+                b32 hit = testCardmanAttackHitCardman(enemy, player, enemyCurrentFrame, &enemyTransform);
+
+                if (hit) {
+                    player->hitByInfo = (cardman_hitby_info){
+                        .wasHit = true,
+                        .attackOrigin = enemy->pos,
+                        .damage = enemy->attack.damage * enemy->attack.damageMultiplier,
+                        .knockbackSpeed = 500.0f
+                    };
+                }
             }
         }
     }
@@ -725,8 +899,12 @@ cmCollisionCheckDone:
         }
 
         if (cm->hitByInfo.wasHit) {
+
             cm->state = CARDMAN_STATE_HITSTUN;
             setAnimState(cm, getCardmanHitstunAnim(cm));
+
+            cm->dashTimer = 0.0f;
+            cm->dashVel = (vec2){0};
 
             vec2 knockBackDir = vec2Subtract(cm->pos, cm->hitByInfo.attackOrigin);
             knockBackDir = vec2Normalize(knockBackDir);
@@ -746,10 +924,14 @@ cmCollisionCheckDone:
                 else {
                     cm->defeatedTimer = 1.0f;
                 }
+
+                if (cm == aob->lastHitEnemy) {
+                    aob->lastHitEnemy = 0;
+                }
             }
             else {
                 cm->hitstunTimer = 0.75f;
-                cm->iframesTimer = 0.05f;
+                cm->iframesTimer = 0.1f;
             }
         }
     }
@@ -1201,6 +1383,24 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
         if (cm->fadingTimer > 0.0f) {
             cmSprite.alpha = 0.5f;
         }
+
+        if (cm->dashTimer > 0.0f) {
+            i32 lastPosIndex = cm->lastPosIndex;
+            for (u32 i = 0; i < 3; i++) {
+                lastPosIndex--;
+                if (lastPosIndex < 0) {
+                    lastPosIndex = 2;
+                }
+                sprite shadow = cmSprite;
+                vec2 pos = cm->lastPositions[lastPosIndex];
+                pos = vec2Add(pos, (vec2){ .x = currentFrame->xOffset, .y = currentFrame->yOffset });
+                cmSprite.pos = pos;
+                cmSprite.tint = 0x000000;
+                cmSprite.alpha = 0.5f;
+                spriteManAddSprite(shadow);
+            }
+        }
+
         spriteManAddSprite(cmSprite);
 
         if (cm->hitstunTimer > 0.0f || 
@@ -1236,5 +1436,63 @@ void drawAceOfBlades (plat_api platAPI, f32 gameScale, mem_arena *scratchMemory)
     }
 
     spriteManPopMatrix();
+
+    sprite topBannerSprite = defaultSprite();
+    topBannerSprite.pos.x = 88.0f;
+    topBannerSprite.pos.y = 0.0f;
+    topBannerSprite.atlasKey = "atlas";
+    topBannerSprite.frameKey = "top_banner";
+    spriteManAddSprite(topBannerSprite);
+
+    spriteManAddText((sprite_text){
+        .x = 94.0f,
+        .y = 8.0f,
+        .text = "player",
+        .fontKey = "font"
+    });
+
+    spriteManAddText((sprite_text){
+        .x = 512.0f,
+        .y = 8.0f,
+        .text = "enemy",
+        .fontKey = "font"
+    });
+
+    mat3x3 posMatrix = mat3x3Translate(154.0f, 3.0f);
+    spriteManPushMatrix(posMatrix);
+
+    // TODO: maxHealth prop
+    f32 healthPercent = aob->playerCardman->hitPoints / 40.0f;
+    f32 healthWidth = (1.0f / 22.0f) * healthPercent * 150.0f;
+
+    mat3x3 scaleTransform = mat3x3ScaleXY(healthWidth, 1.0f);
+    spriteManPushMatrix(scaleTransform);
+    
+    sprite healthBarSprite = defaultSprite();
+    healthBarSprite.atlasKey = "atlas";
+    healthBarSprite.frameKey = "health_square";
+
+    spriteManAddSprite(healthBarSprite);
+    spriteManPopMatrix();
+    spriteManPopMatrix();
+
+    if (aob->lastHitEnemy != 0) {
+        mat3x3 posMatrix = mat3x3Translate(502.0f, 3.0f);
+        spriteManPushMatrix(posMatrix);
+
+        f32 healthPercent = aob->lastHitEnemy->hitPoints / 40.0f;
+        f32 healthWidth = (1.0f / 22.0f) * healthPercent * 150.0f;
+
+        mat3x3 scaleTransform = mat3x3ScaleXY(-healthWidth, 1.0f);
+        spriteManPushMatrix(scaleTransform);
+        
+        sprite healthBarSprite = defaultSprite();
+        healthBarSprite.atlasKey = "atlas";
+        healthBarSprite.frameKey = "health_square";
+
+        spriteManAddSprite(healthBarSprite);
+        spriteManPopMatrix();
+        spriteManPopMatrix();
+    }
 }
 

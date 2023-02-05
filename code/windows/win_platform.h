@@ -4,7 +4,7 @@
 #include "../game/gng_types.h"
 #include "../game/gng_platform.h"
 
-#define WIN_FILES_TO_LOAD_MAX 100
+#define WIN_FILES_TO_LOAD_MAX 150
 
 typedef struct win_file_to_load {
     char *id;
