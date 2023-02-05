@@ -369,7 +369,7 @@ char *suitAndValueToFrame (card_suit suit, card_val value) {
     return tempStringAppend(color, val);
 }
 
-char *getCardmanKatanaAnim (cardman *cm) {
+char *getCardmanKatanaAnim (cardman *cm, i32 index) {
     char *dir = 0;
     char *suit = "spade_";
     switch (cm->facing) {
@@ -387,7 +387,79 @@ char *getCardmanKatanaAnim (cardman *cm) {
             dir = "right_";
         } break;
     }
-    return getPermStringForTempAnimKey(tempStringAppend(tempStringAppend(suit, dir), "katana_0"));
+    return getPermStringForTempAnimKey(tempStringAppend(tempStringAppend(suit, dir), tempStringAppend("katana_", tempStringFromI32(index))));
+}
+
+char *getCardmanPunchAnim (cardman *cm, i32 index) {
+    char *dir = 0;
+    char *suit = "club_";
+    switch (cm->facing) {
+        case DIRECTION_UP: { 
+            suit = "cardman_";
+            dir = "up_";
+        } break;
+        case DIRECTION_DOWN: { 
+            dir = "down_";
+        } break;
+        case DIRECTION_LEFT: { 
+            dir = "left_";
+        } break;
+        case DIRECTION_RIGHT: { 
+            dir = "right_";
+        } break;
+    }
+    if (index > 0) {
+        index--;
+    }
+
+    return getPermStringForTempAnimKey(tempStringAppend(tempStringAppend(suit, dir), tempStringAppend("punch_", tempStringFromI32(index))));
+}
+
+char *getCardmanSpearAnim (cardman *cm, i32 index) {
+    char *dir = 0;
+    char *suit = "heart_";
+    switch (cm->facing) {
+        case DIRECTION_UP: { 
+            suit = "cardman_";
+            dir = "up_";
+        } break;
+        case DIRECTION_DOWN: { 
+            dir = "down_";
+        } break;
+        case DIRECTION_LEFT: { 
+            dir = "left_";
+        } break;
+        case DIRECTION_RIGHT: { 
+            dir = "right_";
+        } break;
+    }
+    if (index == 2) {
+        return "heart_spear_spin";
+    }
+    else {
+        return getPermStringForTempAnimKey(tempStringAppend(tempStringAppend(suit, dir), tempStringAppend("spear_", tempStringFromI32(index))));
+    }
+}
+
+char *getCardmanWandAnim (cardman *cm) {
+    char *dir = 0;
+    char *suit = "diamond_";
+    switch (cm->facing) {
+        case DIRECTION_UP: { 
+            suit = "cardman_";
+            dir = "up_";
+        } break;
+        case DIRECTION_DOWN: { 
+            dir = "down_";
+        } break;
+        case DIRECTION_LEFT: { 
+            dir = "left_";
+        } break;
+        case DIRECTION_RIGHT: { 
+            dir = "right_";
+        } break;
+    }
+    return getPermStringForTempAnimKey(tempStringAppend(tempStringAppend(suit, dir), "wand"));
 }
 
 char *getCardmanDashingAnim (cardman *cm) {

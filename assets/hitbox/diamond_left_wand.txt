@@ -2,7 +2,7 @@
 diamond_left_wand
 -28
 0
-40
+90
 0
 1
 -13

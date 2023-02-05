@@ -2,7 +2,7 @@
 cardman_up_wand
 -20
 2
-40
+90
 0
 1
 -14

@@ -2,7 +2,7 @@
 diamond_down_wand
 -29
 0
-40
+90
 0
 1
 -14

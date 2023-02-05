@@ -87,20 +87,40 @@ typedef struct cardman_attack {
     char *animKey;
 
     u32 comboIndex;
+
     f32 damage;
     f32 damageMultiplier;
     u32 linkStartFrame;
+    u32 id;
+    b32 spawnedBullets;
 
     f32 baseSpeed;
     f32 speedMultiplier;
 } cardman_attack;
+#define HASH_MAP_TYPE cardman_attack
+#include "hash_map.h"
 
 typedef struct cardman_hitby_info {
     b32 wasHit;
+    u32 attackID;
     vec2 attackOrigin;
     f32 damage;
     f32 knockbackSpeed;
 } cardman_hitby_info;
+
+typedef enum {
+    POWERUP_TYPE_SPEED,
+    POWERUP_TYPE_HITPOINTS,
+    POWERUP_TYPE_DASH,
+    POWERUP_TYPE_BACKSTEP,
+    POWERUP_TYPE_ATTACK_DAMAGE,
+    POWERUP_TYPE_ATTACK_SPEED,
+    POWERUP_TYPE_ATTACK_COMBO,
+    POWERUP_TYPE_KNOCKBACK,
+    POWERUP_TYPE_INCREASE_ENEMY_HITSTUN,
+    POWERUP_TYPE_DECREASE_PLAYER_HITSTUN,
+    POWERUP_TYPE_INVINCIBILITY_FRAMES,
+} powerup_type;
 
 typedef struct cardman {
     b32 active;
@@ -122,6 +142,7 @@ typedef struct cardman {
 
     // reset every frame
     cardman_hitby_info hitByInfo;
+    u32 lastAttackHitByID;
 
     f32 knockbackTimer;
     f32 hitstunTimer;
@@ -139,10 +160,25 @@ typedef struct cardman {
 
     f32 dashTimer;
     vec2 dashVel;
+    b32 dodgedAttackDuringThisDodge;
 
     vec2 lastPositions[3];
     u32 lastPosCounter;
     u32 lastPosIndex;
+
+    u32 speedLevel;
+    u32 hitpointLevel;
+    u32 dashLevel;
+    u32 backstepLevel;
+    u32 attackDamageLevel;
+    u32 attackSpeedLevel;
+    u32 attackComboLevel;
+    u32 knockbackLevel;
+    u32 enemyHitstunLevel;
+    u32 playerHitstunLevel;
+    u32 invincibilityFramesLevel;
+
+    f32 maxHitpoints;
 } cardman;
 typedef cardman *cardman_ptr;
 #define LIST_TYPE cardman_ptr
@@ -223,7 +259,22 @@ typedef struct player_upgrade {
 #include "../list.h"
 
 #define NUM_DECKS 4
-#define STARTING_CARDS_PER_DECK 5
+#define STARTING_CARDS_PER_DECK 3
+
+typedef struct bullet_star {
+    b32 active;
+    vec2 pos;
+    vec2 vel;
+    f32 damage;
+    f32 lifetime;
+    cardman_owner owner;
+    u32 numHitCardmen;
+    u32 attackID;
+    animation_state animState;
+} bullet_star;
+#define MAX_NUM_BULLETS 200
+#define BULLET_SPEED 200.0f
+#define BULLET_LIFETIME 1.5f
 
 typedef struct aob_state {
     b32 initialized;
@@ -246,6 +297,10 @@ typedef struct aob_state {
 
     b32 animationsLoaded;
     char_anim_data_ptr_hash_map animations;
+
+    bullet_star bullets[MAX_NUM_BULLETS];
+
+    cardman_attack_hash_map allAttacks;
 } aob_state;
 
 #endif
